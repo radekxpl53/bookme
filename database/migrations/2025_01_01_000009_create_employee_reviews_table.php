@@ -12,12 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees');
             $table->foreignId('user_id')->constrained('users');
-            // nazwa uslugi, ktorej dotyczy opinia
             $table->text('service')->nullable();
-            // ocena w skali 1-5
             $table->integer('rating');
             $table->text('comment')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

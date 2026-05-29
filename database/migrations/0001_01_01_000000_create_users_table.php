@@ -16,9 +16,7 @@ return new class extends Migration
             $table->string('surname');
             $table->string('phone')->nullable();
             $table->string('password');
-            // image_id dodamy kluczem obcym pozniej, bo tabela images
-            // jest tworzona w osobnej migracji
-            $table->unsignedBigInteger('image_id')->nullable();
+            $table->unsignedBigInteger('image_id')->nullable(); // FK dodany po stworzeniu tabeli images
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();

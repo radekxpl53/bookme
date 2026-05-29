@@ -8,10 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Dodajemy klucz obcy dopiero teraz, bo tabela images
-        // jest tworzona po tabeli users
         Schema::table('users', function (Blueprint $table) {
-            $table->foreign('image_id')->references('id')->on('images');
+            $table->foreign('image_id')->references('id')->on('images')->nullOnDelete();
         });
     }
 

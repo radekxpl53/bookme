@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('working_hours', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees');
-            // dzien tygodnia: 0 = niedziela, 6 = sobota
             $table->integer('day_of_week');
             $table->time('start_time');
             $table->time('end_time');

@@ -13,8 +13,7 @@ return new class extends Migration
             $table->foreignId('business_id')->constrained('businesses');
             $table->foreignId('user_id')->constrained('users');
             $table->text('reason')->nullable();
-            $table->timestamps();
-            // jeden uzytkownik moze byc na czarnej liscie danego lokalu tylko raz
+            $table->timestamp('created_at')->useCurrent();
             $table->unique(['business_id', 'user_id']);
         });
     }

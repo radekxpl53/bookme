@@ -12,10 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('business_id')->constrained('businesses');
             $table->foreignId('user_id')->constrained('users');
-            // ocena w skali 1-5
             $table->integer('rating');
             $table->text('comment')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

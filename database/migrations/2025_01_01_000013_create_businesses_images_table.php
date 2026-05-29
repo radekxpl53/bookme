@@ -11,9 +11,7 @@ return new class extends Migration
         Schema::create('businesses_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('business_id')->constrained('businesses');
-            // nazwa kolumny zgodna z ERD (images_id)
             $table->foreignId('images_id')->constrained('images');
-            $table->timestamps();
         });
     }
 

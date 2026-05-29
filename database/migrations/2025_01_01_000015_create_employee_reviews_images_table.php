@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees');
             $table->foreignId('images_id')->constrained('images');
-            $table->timestamps();
         });
     }
 
