@@ -67,4 +67,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(BusinessBlacklist::class);
     }
+
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->businesses()->exists();
+    }
+
+    public function isClient(): bool
+    {
+        return !$this->isAdmin() && !$this->isOwner();
+    }
 }
