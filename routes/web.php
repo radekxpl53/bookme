@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\BusinessPublicController;
 
 // DO USUNIĘCIA POTEM, JAK ZROBIMY ZWYKLE LOGOWANIE
 Route::get('/dev-login', function () {
@@ -14,6 +15,8 @@ Route::get('/dev-login', function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/lokal/{business}', [BusinessPublicController::class, 'show'])->name('lokal.show');
 
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
     Route::resource('lokale', BusinessController::class);
