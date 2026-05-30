@@ -66,7 +66,7 @@
                             <span class="text-muted small">({{ $business->reviews_count }} opinii)</span>
                         </p>
 
-                        <a href="#" class="btn btn-outline-primary btn-sm w-100">Zobacz lokal</a>
+                        <a href="{{ route('lokal.show', $business) }}" class="btn btn-outline-primary btn-sm w-100">Zobacz lokal</a>
                     </div>
                 </div>
             </div>
