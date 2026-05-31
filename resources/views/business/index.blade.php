@@ -22,7 +22,10 @@
                 <tbody>
                     @forelse($businesses as $business)
                         <tr>
-                            <td class="align-middle fw-bold">{{ $business->name }}</td>
+                            <td class="align-middle fw-bold">
+                                {{ $business->name }} <br>
+                                <span class="badge bg-secondary fw-normal">{{ $business->category }}</span>
+                            </td>
                             <td class="align-middle">{{ $business->address }}</td>
                             <td class="text-end">
                                 <a href="{{ route('biznes.lokale.edit', $business->id) }}" class="btn btn-sm btn-outline-primary">

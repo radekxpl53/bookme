@@ -21,8 +21,9 @@ class BusinessController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+       $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string',
             'address' => 'required|string|max:255',
             'description' => 'nullable|string',
             'lat' => 'required|numeric',
@@ -60,6 +61,7 @@ class BusinessController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string',
             'address' => 'required|string|max:255',
             'description' => 'nullable|string',
             'lat' => 'required|numeric',

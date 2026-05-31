@@ -11,15 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Business extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'owner_id',
-        'name',
-        'address',
-        'lon',
-        'lat',
-        'description',
-    ];
+            'name',
+            'category',
+            'address',
+            'description',
+            'lat',
+            'lon',
+            'owner_id',
+        ];
 
     protected function casts(): array
     {

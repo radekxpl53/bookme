@@ -26,6 +26,17 @@
                     <label for="name" class="form-label">Nazwa salonu *</label>
                     <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
                 </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Kategoria salonu *</label>
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="Fryzjer" {{ old('category', $business->category) == 'Fryzjer' ? 'selected' : '' }}>Fryzjer</option>
+                        <option value="Barber" {{ old('category', $business->category) == 'Barber' ? 'selected' : '' }}>Barber</option>
+                        <option value="Kosmetyczka" {{ old('category', $business->category) == 'Kosmetyczka' ? 'selected' : '' }}>Kosmetyczka</option>
+                        <option value="Masaż" {{ old('category', $business->category) == 'Masaż' ? 'selected' : '' }}>Masaż</option>
+                        <option value="Paznokcie" {{ old('category', $business->category) == 'Paznokcie' ? 'selected' : '' }}>Paznokcie</option>
+                        <option value="Brwi i rzęsy" {{ old('category', $business->category) == 'Brwi i rzęsy' ? 'selected' : '' }}>Brwi i rzęsy</option>
+                    </select>
+                </div>
 
                 <div class="mb-3">
                     <label for="address" class="form-label">Pełny adres *</label>
