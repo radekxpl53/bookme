@@ -40,4 +40,50 @@ class BusinessController extends Controller
                          ->with('success', 'Twój nowy salon został pomyślnie dodany!');
     }
 
+    public function edit($id)
+    {
+        $business = Business::findOrFail($id);
+        if ($business->owner_id !== Auth::id()) {
+            abort(403, 'Brak uprawnień. Nie możesz edytować obcego salonu!');
+        }
+
+        return view('business.edit', compact('business'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $business = Business::findOrFail($id);
+
+        if ($business->owner_id !== Auth::id()) {
+            abort(403, 'Brak uprawnień. Nie możesz edytować obcego salonu!');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'lat' => 'required|numeric',
+            'lon' => 'required|numeric',
+        ]);
+
+        $business->update($validated);
+
+        return redirect()->route('biznes.lokale.index')
+                         ->with('success', 'Dane salonu zostały pomyślnie zaktualizowane!');
+    }
+
+    public function destroy($id)
+    {
+        $business = Business::findOrFail($id);
+
+        if ($business->owner_id !== Auth::id()) {
+            abort(403, 'Brak uprawnień. Nie możesz usunąć obcego salonu!');
+        }
+
+        $business->delete();
+
+        return redirect()->route('biznes.lokale.index')
+                         ->with('success', 'Salon został usunięty z systemu!');
+    }
+
 }
