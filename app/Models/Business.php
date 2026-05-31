@@ -29,6 +29,14 @@ class Business extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Business $business) {
+            $business->employees()->delete();
+            $business->services()->delete();
+        });
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');

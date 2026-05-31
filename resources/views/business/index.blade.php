@@ -20,7 +20,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Iterujemy po lokalach Janusza --}}
                     @forelse($businesses as $business)
                         <tr>
                             <td class="align-middle fw-bold">{{ $business->name }}</td>
@@ -29,7 +28,11 @@
                                 <a href="{{ route('biznes.lokale.edit', $business->id) }}" class="btn btn-sm btn-outline-primary">
                                     Edytuj
                                 </a>
-                                <button class="btn btn-sm btn-outline-danger" disabled>Usuń</button>
+                                <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
+                                </form>
                             </td>
                         </tr>
                     @empty
