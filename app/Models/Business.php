@@ -32,8 +32,23 @@ class Business extends Model
     protected static function booted(): void
     {
         static::deleting(function (Business $business) {
+            $employeeIds = $business->employees()->pluck('id');
+
+            \App\Models\Appointment::whereIn('employee_id', $employeeIds)->delete();
+            \App\Models\WorkingHour::whereIn('employee_id', $employeeIds)->delete();
+            \App\Models\EmployeeReview::whereIn('employee_id', $employeeIds)->delete();
+            \Illuminate\Support\Facades\DB::table('employee_service')->whereIn('employee_id', $employeeIds)->delete();
+            \App\Models\EmployeePortfolio::whereIn('employee_id', $employeeIds)->delete();
+            \Illuminate\Support\Facades\DB::table('employee_reviews_images')->whereIn('employee_id', $employeeIds)->delete();
+
             $business->employees()->delete();
             $business->services()->delete();
+            $business->reviews()->delete();
+            $business->blacklist()->delete();
+            $business->photos()->delete();
+
+            \Illuminate\Support\Facades\DB::table('businesses_images')->where('business_id', $business->id)->delete();
+            \Illuminate\Support\Facades\DB::table('businesse_reviews_images')->where('business_id', $business->id)->delete();
         });
     }
 

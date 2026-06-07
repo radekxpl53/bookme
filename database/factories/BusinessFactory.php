@@ -15,6 +15,7 @@ class BusinessFactory extends Factory
         return [
             'owner_id' => User::factory(),
             'name' => fake()->company() . ' Salon',
+            'category' => fake()->randomElement(['Fryzjer', 'Barber', 'Kosmetyczka', 'Masaż', 'Paznokcie', 'Brwi i rzęsy']),
             'address' => fake()->address(),
             'lon' => fake()->longitude(14.0, 24.0),
             'lat' => fake()->latitude(49.0, 54.0),

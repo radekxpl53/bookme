@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -29,18 +27,25 @@
                 <div class="mb-3">
                     <label for="category" class="form-label">Kategoria salonu *</label>
                     <select class="form-select" id="category" name="category" required>
-                        <option value="Fryzjer" {{ old('category', $business->category) == 'Fryzjer' ? 'selected' : '' }}>Fryzjer</option>
-                        <option value="Barber" {{ old('category', $business->category) == 'Barber' ? 'selected' : '' }}>Barber</option>
-                        <option value="Kosmetyczka" {{ old('category', $business->category) == 'Kosmetyczka' ? 'selected' : '' }}>Kosmetyczka</option>
-                        <option value="Masaż" {{ old('category', $business->category) == 'Masaż' ? 'selected' : '' }}>Masaż</option>
-                        <option value="Paznokcie" {{ old('category', $business->category) == 'Paznokcie' ? 'selected' : '' }}>Paznokcie</option>
-                        <option value="Brwi i rzęsy" {{ old('category', $business->category) == 'Brwi i rzęsy' ? 'selected' : '' }}>Brwi i rzęsy</option>
+                        <option value="" disabled {{ old('category') ? '' : 'selected' }}>-- Wybierz kategorię --</option>
+                        <option value="Fryzjer" {{ old('category') == 'Fryzjer' ? 'selected' : '' }}>Fryzjer</option>
+                        <option value="Barber" {{ old('category') == 'Barber' ? 'selected' : '' }}>Barber</option>
+                        <option value="Kosmetyczka" {{ old('category') == 'Kosmetyczka' ? 'selected' : '' }}>Kosmetyczka</option>
+                        <option value="Masaż" {{ old('category') == 'Masaż' ? 'selected' : '' }}>Masaż</option>
+                        <option value="Paznokcie" {{ old('category') == 'Paznokcie' ? 'selected' : '' }}>Paznokcie</option>
+                        <option value="Brwi i rzęsy" {{ old('category') == 'Brwi i rzęsy' ? 'selected' : '' }}>Brwi i rzęsy</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="address" class="form-label">Pełny adres *</label>
-                    <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}" required placeholder="Wpisz miasto i ulicę, a potem kliknij obok">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}" required placeholder="Wpisz miasto i ulicę">
+                        <button type="button" class="btn btn-outline-secondary" id="geocodeBtn">
+                            <i class="bi bi-geo-alt-fill"></i> Pokaż na mapie
+                        </button>
+                    </div>
+                    <div class="form-text">Wpisz adres i kliknij "Pokaż na mapie", aby ustawić pinezką lokalizację.</div>
                 </div>
 
                 <div class="mb-3">
@@ -50,6 +55,7 @@
 
                 <hr>
                 <h6 class="mb-3">Lokalizacja na mapie *</h6>
+                <p class="text-muted small">Kliknij przycisk "Pokaż na mapie" lub kliknij bezpośrednio na mapę, aby ustawić pinezką.</p>
 
                 <div id="map" style="height: 400px; width: 100%; border: 2px solid #ccc; border-radius: 8px; z-index: 1;"></div>
 
@@ -64,12 +70,13 @@
         </div>
     </div>
 </div>
+@endsection
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@section('scripts')
 <script>
-    setTimeout(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         if (typeof L === 'undefined') {
-            document.getElementById('map').innerHTML = "<h3 style='color:red; text-align:center; padding-top: 50px;'>BRAVE BLOKUJE SKRYPTY! Wyłącz Tarcze (Shields) albo otwórz to w Edge/Chrome.</h3>";
+            document.getElementById('map').innerHTML = "<h3 style='color:red; text-align:center; padding-top: 50px;'>Nie udało się załadować mapy. Wyłącz blokowanie skryptów w przeglądarce.</h3>";
             return;
         }
 
@@ -80,14 +87,13 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        map.invalidateSize();
-
         var marker = null;
         var latInput = document.getElementById('lat');
         var lonInput = document.getElementById('lon');
         var addressInput = document.getElementById('address');
+        var geocodeBtn = document.getElementById('geocodeBtn');
 
-        if(latInput.value && lonInput.value && !isNaN(parseFloat(latInput.value))) {
+        if (latInput.value && lonInput.value && !isNaN(parseFloat(latInput.value))) {
             marker = L.marker([parseFloat(latInput.value), parseFloat(lonInput.value)]).addTo(map);
             map.setView([parseFloat(latInput.value), parseFloat(lonInput.value)], 15);
         }
@@ -102,27 +108,42 @@
             lonInput.value = e.latlng.lng.toFixed(7);
         });
 
-        addressInput.addEventListener('blur', function() {
-            var query = this.value;
-            if (query.length > 5) {
-                fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data.length > 0) {
-                            var newLat = parseFloat(data[0].lat);
-                            var newLon = parseFloat(data[0].lon);
-                            map.setView([newLat, newLon], 16);
-                            if (marker !== null) {
-                                marker.setLatLng([newLat, newLon]);
-                            } else {
-                                marker = L.marker([newLat, newLon]).addTo(map);
-                            }
-                            latInput.value = newLat.toFixed(7);
-                            lonInput.value = newLon.toFixed(7);
-                        }
-                    });
+        geocodeBtn.addEventListener('click', function() {
+            var query = addressInput.value.trim();
+            if (query.length < 3) {
+                alert('Wpisz adres (min. 3 znaki), żeby wyszukać lokalizację.');
+                return;
             }
+
+            geocodeBtn.disabled = true;
+            geocodeBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Szukam...';
+
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query))
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data && data.length > 0) {
+                        var newLat = parseFloat(data[0].lat);
+                        var newLon = parseFloat(data[0].lon);
+                        map.setView([newLat, newLon], 16);
+                        if (marker !== null) {
+                            marker.setLatLng([newLat, newLon]);
+                        } else {
+                            marker = L.marker([newLat, newLon]).addTo(map);
+                        }
+                        latInput.value = newLat.toFixed(7);
+                        lonInput.value = newLon.toFixed(7);
+                    } else {
+                        alert('Nie znaleziono lokalizacji. Spróbuj wpisać dokładniejszy adres.');
+                    }
+                })
+                .catch(function() {
+                    alert('Błąd podczas wyszukiwania. Sprawdź połączenie z internetem.');
+                })
+                .finally(function() {
+                    geocodeBtn.disabled = false;
+                    geocodeBtn.innerHTML = '<i class="bi bi-geo-alt-fill"></i> Pokaż na mapie';
+                });
         });
-    }, 300);
+    });
 </script>
 @endsection

@@ -25,8 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function () {
+    Route::get('lokale/create', [BusinessController::class, 'create'])->name('lokale.create');
+    Route::post('lokale', [BusinessController::class, 'store'])->name('lokale.store');
+});
+
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
-    Route::resource('lokale', BusinessController::class);
+    Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
 });
 
 require __DIR__.'/auth.php';
