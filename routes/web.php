@@ -31,10 +31,12 @@ Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function (
 });
 
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\EmployeeController;
 
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
     Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
     Route::resource('lokale.uslugi', ServiceController::class)->except(['show'])->parameters(['lokale' => 'business', 'uslugi' => 'service']);
+    Route::resource('lokale.pracownicy', EmployeeController::class)->except(['show'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee']);
 });
 
 require __DIR__.'/auth.php';

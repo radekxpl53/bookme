@@ -31,6 +31,9 @@
                                 <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-sm btn-outline-success">
                                     Usługi
                                 </a>
+                                <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-sm btn-outline-info">
+                                    Pracownicy
+                                </a>
                                 <a href="{{ route('biznes.lokale.edit', $business->id) }}" class="btn btn-sm btn-outline-primary">
                                     Edytuj
                                 </a>
