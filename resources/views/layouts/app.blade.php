@@ -14,7 +14,7 @@
 
     @yield('styles')
 </head>
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100 bg-light">
 
     @include('partials.navbar')
 
@@ -27,7 +27,9 @@
         @endif
     </div>
 
-    @yield('content')
+    <main class="flex-grow-1">
+        @yield('content')
+    </main>
 
     @include('partials.footer')
 

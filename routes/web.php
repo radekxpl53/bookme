@@ -30,8 +30,11 @@ Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function (
     Route::post('lokale', [BusinessController::class, 'store'])->name('lokale.store');
 });
 
+use App\Http\Controllers\ServiceController;
+
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
     Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
+    Route::resource('lokale.uslugi', ServiceController::class)->except(['show'])->parameters(['lokale' => 'business', 'uslugi' => 'service']);
 });
 
 require __DIR__.'/auth.php';

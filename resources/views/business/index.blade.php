@@ -28,6 +28,9 @@
                             </td>
                             <td class="align-middle">{{ $business->address }}</td>
                             <td class="text-end">
+                                <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-sm btn-outline-success">
+                                    Usługi
+                                </a>
                                 <a href="{{ route('biznes.lokale.edit', $business->id) }}" class="btn btn-sm btn-outline-primary">
                                     Edytuj
                                 </a>
