@@ -32,11 +32,13 @@ Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function (
 
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\BlacklistController;
 
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
     Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
     Route::resource('lokale.uslugi', ServiceController::class)->except(['show'])->parameters(['lokale' => 'business', 'uslugi' => 'service']);
     Route::resource('lokale.pracownicy', EmployeeController::class)->except(['show'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee']);
+    Route::resource('lokale.blacklist', BlacklistController::class)->except(['show', 'edit', 'update'])->parameters(['lokale' => 'business', 'blacklist' => 'blacklist']);
 });
 
 require __DIR__.'/auth.php';

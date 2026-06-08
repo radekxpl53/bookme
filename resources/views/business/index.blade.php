@@ -34,6 +34,9 @@
                                 <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-sm btn-outline-info">
                                     Pracownicy
                                 </a>
+                                <a href="{{ route('biznes.lokale.blacklist.index', $business->id) }}" class="btn btn-sm btn-outline-dark">
+                                    Czarna lista
+                                </a>
                                 <a href="{{ route('biznes.lokale.edit', $business->id) }}" class="btn btn-sm btn-outline-primary">
                                     Edytuj
                                 </a>
