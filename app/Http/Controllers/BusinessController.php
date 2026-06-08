@@ -8,9 +8,24 @@ use Illuminate\Support\Facades\Auth;
 
 class BusinessController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $businesses = Auth::user()->businesses;
+        $query = Auth::user()->businesses();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                  ->orWhere('address', 'ilike', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->input('category'));
+        }
+
+        $businesses = $query->latest()->get();
+
         return view('business.index', compact('businesses'));
     }
 

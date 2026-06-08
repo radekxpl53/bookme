@@ -9,6 +9,40 @@
         </a>
     </div>
 
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form action="{{ route('biznes.lokale.index') }}" method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <label for="search" class="form-label visually-hidden">Szukaj</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}" placeholder="Szukaj po nazwie lub adresie...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="category" class="form-label visually-hidden">Kategoria</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">Wszystkie kategorie</option>
+                        <option value="Fryzjer" {{ request('category') == 'Fryzjer' ? 'selected' : '' }}>Fryzjer</option>
+                        <option value="Barber" {{ request('category') == 'Barber' ? 'selected' : '' }}>Barber</option>
+                        <option value="Kosmetyczka" {{ request('category') == 'Kosmetyczka' ? 'selected' : '' }}>Kosmetyczka</option>
+                        <option value="Masaż" {{ request('category') == 'Masaż' ? 'selected' : '' }}>Masaż</option>
+                        <option value="Paznokcie" {{ request('category') == 'Paznokcie' ? 'selected' : '' }}>Paznokcie</option>
+                        <option value="Brwi i rzęsy" {{ request('category') == 'Brwi i rzęsy' ? 'selected' : '' }}>Brwi i rzęsy</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-dark w-100">Filtruj</button>
+                </div>
+            </form>
+            @if(request()->hasAny(['search', 'category']))
+                <div class="mt-2 text-end">
+                    <a href="{{ route('biznes.lokale.index') }}" class="btn btn-sm btn-outline-secondary">Wyczyść filtry</a>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <table class="table table-hover mb-0">
