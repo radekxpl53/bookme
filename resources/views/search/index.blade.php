@@ -38,9 +38,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Data</label>
-                            <input type="date" name="data" class="form-control form-control-sm"
-                                   value="{{ request('data', $dzien->toDateString()) }}">
+                            <label class="form-label">Zakres dat</label>
+                            <div class="input-group input-group-sm mb-2">
+                                <span class="input-group-text">Od</span>
+                                <input type="date" name="data_od" class="form-control"
+                                       value="{{ $dzienOd->toDateString() }}" min="{{ now()->toDateString() }}">
+                            </div>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">Do</span>
+                                <input type="date" name="data_do" class="form-control"
+                                       value="{{ $dzienDo->toDateString() }}" min="{{ now()->toDateString() }}">
+                            </div>
                         </div>
 
                         <div class="mb-3">

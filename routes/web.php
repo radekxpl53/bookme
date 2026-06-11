@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessPublicController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
 
 // DO USUNIĘCIA POTEM, JAK ZADZIAŁA ZWYKLE LOGOWANIE
@@ -27,16 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/rezerwacja', function (\Illuminate\Http\Request $request) {
-        $service = \App\Models\Service::with('business')->findOrFail($request->input('usluga_id'));
-        $employee = \App\Models\Employee::findOrFail($request->input('pracownik_id'));
-
-        return view('booking.stub', [
-            'service' => $service,
-            'employee' => $employee,
-            'termin' => $request->input('termin'),
-        ]);
-    })->name('rezerwacja.stub');
+    Route::get('/rezerwacja/sukces/{appointment}', [BookingController::class, 'success'])->name('rezerwacja.success');
+    Route::get('/rezerwacja/{business}', [BookingController::class, 'create'])->name('rezerwacja.create');
+    Route::post('/rezerwacja', [BookingController::class, 'store'])->name('rezerwacja.store');
 });
 
 Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function () {

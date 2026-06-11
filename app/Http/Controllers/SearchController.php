@@ -12,9 +12,17 @@ class SearchController extends Controller
 {
     public function index(Request $request, AvailabilityService $availability)
     {
-        $dzien = $request->filled('data')
-            ? Carbon::parse($request->input('data'))->startOfDay()
-            : Carbon::today();
+        $dzienOd = $request->filled('data_od')
+            ? Carbon::parse($request->input('data_od'))->startOfDay()
+            : ($request->filled('data') ? Carbon::parse($request->input('data'))->startOfDay() : Carbon::today());
+
+        $dzienDo = $request->filled('data_do')
+            ? Carbon::parse($request->input('data_do'))->startOfDay()
+            : $dzienOd->copy();
+
+        if ($dzienDo->lessThan($dzienOd)) {
+            $dzienDo = $dzienOd->copy();
+        }
 
         $query = Service::query()
             ->select('services.*', 'br.avg_rating', 'br.reviews_count')
@@ -90,7 +98,7 @@ class SearchController extends Controller
         $godzinaOd = $request->input('godzina_od');
         $godzinaDo = $request->input('godzina_do');
         foreach ($services as $service) {
-            $service->terminy = $availability->znajdzTerminy($service, $dzien, $godzinaOd, $godzinaDo);
+            $service->terminy = $availability->znajdzTerminyWZakresie($service, $dzienOd, $dzienDo, $godzinaOd, $godzinaDo);
         }
 
         $pins = $services->getCollection()
@@ -111,7 +119,8 @@ class SearchController extends Controller
             'services' => $services,
             'pins' => $pins,
             'kategorie' => $kategorie,
-            'dzien' => $dzien,
+            'dzienOd' => $dzienOd,
+            'dzienDo' => $dzienDo,
         ]);
     }
 }

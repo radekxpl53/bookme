@@ -33,29 +33,40 @@
 
         <hr class="my-3">
 
+        @php $wieleDni = $dzienOd->toDateString() !== $dzienDo->toDateString(); @endphp
         <div>
             <p class="small text-muted mb-2">
                 <i class="bi bi-calendar-check"></i>
-                Wolne terminy na {{ $dzien->translatedFormat('l, j F') }}:
+                @if($wieleDni)
+                    Najbliższe wolne terminy:
+                @else
+                    Wolne terminy na {{ $dzienOd->translatedFormat('l, j F') }}:
+                @endif
             </p>
 
             @if(count($service->terminy) > 0)
                 <div class="d-flex flex-wrap gap-2">
                     @foreach($service->terminy as $termin)
                         <a class="btn btn-outline-primary btn-sm"
-                           href="{{ route('rezerwacja.stub', [
-                                'usluga_id'    => $service->id,
-                                'pracownik_id' => $termin['employee_id'],
-                                'termin'       => $termin['time']->format('Y-m-d H:i'),
+                           href="{{ route('rezerwacja.create', [
+                                'business'    => $service->business_id,
+                                'service_id'  => $service->id,
+                                'employee_id' => $termin['employee_id'],
+                                'date'        => $termin['time']->toDateString(),
+                                'time'        => $termin['time']->format('H:i'),
                            ]) }}"
                            title="{{ $termin['employee_name'] }}">
-                            {{ $termin['time']->format('H:i') }}
+                            @if($wieleDni)
+                                {{ $termin['time']->translatedFormat('D j.m, H:i') }}
+                            @else
+                                {{ $termin['time']->format('H:i') }}
+                            @endif
                         </a>
                     @endforeach
                 </div>
             @else
                 <p class="text-muted small mb-0">
-                    Brak wolnych terminów w tym dniu. Wybierz inną datę lub zobacz
+                    Brak wolnych terminów w wybranym zakresie. Zmień daty lub zobacz
                     <a href="{{ route('lokal.show', $service->business) }}">profil lokalu</a>.
                 </p>
             @endif

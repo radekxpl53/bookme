@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Appointment;
+use App\Models\Business;
+use App\Models\Employee;
+use App\Models\Service;
+use App\Services\AvailabilityService;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class BookingController extends Controller
+{
+    public function create(Request $request, Business $business, AvailabilityService $availability)
+    {
+        $business->load([
+            'services',
+            'employees' => fn ($q) => $q->where('is_active', true),
+            'employees.services',
+            'employees.workingHours',
+        ]);
+
+        $service = $request->filled('service_id')
+            ? $business->services->firstWhere('id', (int) $request->input('service_id'))
+            : null;
+
+        $pracownicy = $service
+            ? $business->employees->filter(fn ($e) => $e->services->contains('id', $service->id))->values()
+            : collect();
+
+        $employee = null;
+        if ($service && $request->filled('employee_id')) {
+            $employee = $pracownicy->firstWhere('id', (int) $request->input('employee_id'));
+        }
+
+        $dzien = $request->filled('date')
+            ? Carbon::parse($request->input('date'))->startOfDay()
+            : Carbon::today();
+
+        $time = $request->input('time');
+
+        if ($service && ! $time) {
+            foreach ($pracownicy as $e) {
+                $e->terminy = $availability->znajdzTerminy($service, $dzien, null, null, 12, $e->id);
+            }
+        }
+
+        if (! $service) {
+            $step = 1;
+        } elseif (! $employee || ! $time) {
+            $step = 2;
+        } else {
+            $step = 3;
+        }
+
+        return view('booking.create', compact(
+            'business', 'service', 'pracownicy', 'employee', 'dzien', 'time', 'step'
+        ));
+    }
+
+    public function store(Request $request, AvailabilityService $availability)
+    {
+        $validated = $request->validate([
+            'service_id' => 'required|exists:services,id',
+            'employee_id' => 'required|exists:employees,id',
+            'date' => 'required|date',
+            'time' => 'required|date_format:H:i',
+        ]);
+
+        $service = Service::findOrFail($validated['service_id']);
+        $employee = Employee::with(['workingHours', 'services'])->findOrFail($validated['employee_id']);
+
+        $start = Carbon::parse($validated['date'].' '.$validated['time']);
+
+        $bledy = [];
+        if ($employee->business_id !== $service->business_id) {
+            $bledy[] = 'Wybrany pracownik nie należy do tego lokalu.';
+        }
+        if (! $employee->services->contains('id', $service->id)) {
+            $bledy[] = 'Wybrany pracownik nie wykonuje tej usługi.';
+        }
+        if (! $availability->czyWolny($service, $employee, $start)) {
+            $bledy[] = 'Ten termin jest już niedostępny. Wybierz inny.';
+        }
+
+        if (! empty($bledy)) {
+            return back()->withErrors($bledy)->withInput();
+        }
+
+        $appointment = Appointment::create([
+            'client_id' => Auth::id(),
+            'employee_id' => $employee->id,
+            'service_id' => $service->id,
+            'start_at' => $start,
+            'finish_at' => $start->copy()->addMinutes($service->duration_minutes),
+            'status' => 'pending',
+            'total_price' => $service->price,
+        ]);
+
+        return redirect()->route('rezerwacja.success', $appointment);
+    }
+
+    public function success(Appointment $appointment)
+    {
+        if ($appointment->client_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $appointment->load(['service.business', 'employee']);
+
+        return view('booking.success', compact('appointment'));
+    }
+}
