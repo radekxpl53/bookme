@@ -11,7 +11,7 @@
                     <a class="nav-link" href="{{ route('home') }}">Strona główna</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}">Szukaj usługi</a>
+                    <a class="nav-link" href="{{ route('szukaj') }}">Szukaj usługi</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto align-items-lg-center">

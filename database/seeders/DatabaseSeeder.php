@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $owner = User::where('email', 'wlasciciel@bookme.test')->first();
+        $client = User::where('email', 'klient@bookme.test')->first();
 
         if ($owner->businesses()->count() === 0) {
             $businesses = \App\Models\Business::factory(5)->create([
@@ -54,13 +55,54 @@ class DatabaseSeeder extends Seeder
             ]);
 
             foreach ($businesses as $business) {
-                \App\Models\Employee::factory(3)->create([
+                $employees = \App\Models\Employee::factory(3)->create([
                     'business_id' => $business->id,
                 ]);
 
-                \App\Models\Service::factory(4)->create([
+                $services = \App\Models\Service::factory(4)->create([
                     'business_id' => $business->id,
                 ]);
+
+                foreach ($employees as $employee) {
+                    $employee->services()->sync(
+                        $services->random(rand(2, 3))->pluck('id')->toArray()
+                    );
+
+                    foreach (range(1, 5) as $dzien) {
+                        \App\Models\WorkingHour::create([
+                            'employee_id' => $employee->id,
+                            'day_of_week' => $dzien,
+                            'start_time' => '09:00',
+                            'end_time' => '17:00',
+                        ]);
+                    }
+                }
+
+                $employee = $employees->first();
+                $service = $employee->services->first();
+                if ($service) {
+                    foreach (['10:00', '13:00'] as $godzina) {
+                        $start = \Carbon\Carbon::today()->setTimeFromTimeString($godzina);
+                        \App\Models\Appointment::create([
+                            'client_id' => $client->id,
+                            'employee_id' => $employee->id,
+                            'service_id' => $service->id,
+                            'start_at' => $start,
+                            'finish_at' => $start->copy()->addMinutes($service->duration_minutes),
+                            'status' => 'confirmed',
+                            'total_price' => $service->price,
+                        ]);
+                    }
+                }
+
+                foreach (range(1, rand(2, 5)) as $i) {
+                    \App\Models\BusinessReview::create([
+                        'business_id' => $business->id,
+                        'user_id' => $client->id,
+                        'rating' => rand(3, 5),
+                        'comment' => 'Bardzo polecam, obsługa na medal!',
+                    ]);
+                }
             }
         }
     }
