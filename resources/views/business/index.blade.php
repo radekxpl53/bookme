@@ -62,23 +62,40 @@
                             </td>
                             <td class="align-middle">{{ $business->address }}</td>
                             <td class="text-end">
-                                <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-sm btn-outline-success">
-                                    Usługi
-                                </a>
-                                <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-sm btn-outline-info">
-                                    Pracownicy
-                                </a>
-                                <a href="{{ route('biznes.lokale.blacklist.index', $business->id) }}" class="btn btn-sm btn-outline-dark">
-                                    Czarna lista
-                                </a>
-                                <a href="{{ route('biznes.lokale.edit', $business->id) }}" class="btn btn-sm btn-outline-primary">
-                                    Edytuj
-                                </a>
-                                <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
-                                </form>
+                                <div class="btn-group shadow-sm" role="group">
+                                    <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-sm btn-light border" title="Zarządzaj usługami">
+                                        <i class="bi bi-card-list text-primary"></i> Usługi
+                                    </a>
+                                    <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-sm btn-light border" title="Zarządzaj pracownikami">
+                                        <i class="bi bi-people text-info"></i> Pracownicy
+                                    </a>
+                                    
+                                    <button type="button" class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Opcje
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('biznes.lokale.edit', $business->id) }}">
+                                                <i class="bi bi-pencil-square me-2 text-secondary"></i> Edytuj lokal
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('biznes.lokale.blacklist.index', $business->id) }}">
+                                                <i class="bi bi-person-x me-2 text-dark"></i> Czarna lista
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon? Wszystkie dane zostaną trwale wykasowane!');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="bi bi-trash me-2"></i> Usuń lokal
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     @empty
