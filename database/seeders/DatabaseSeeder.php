@@ -11,13 +11,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@bookme.test'],
+            ['email' => 'admin@admin.com'],
             [
                 'username' => 'admin',
                 'first_name' => 'Szef',
                 'surname' => 'Wszystkich Szefow',
                 'phone' => '000111888',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin'),
                 'is_admin' => true,
             ]
         );

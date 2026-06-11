@@ -8,7 +8,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $popularBusinesses = Business::withCount('reviews')
+        $popularBusinesses = Business::where('is_approved', true)
+            ->withCount('reviews')
             ->withAvg('reviews', 'rating')
             ->orderByDesc('reviews_count')
             ->take(6)

@@ -8,6 +8,8 @@ class BusinessPublicController extends Controller
 {
     public function show(Business $business)
     {
+        abort_if(!$business->is_approved, 404);
+
         $business->load([
             'services',
             'employees',
