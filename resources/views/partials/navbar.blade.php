@@ -16,6 +16,13 @@
             </ul>
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 @auth
+                    @if(Auth::user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link text-warning" href="{{ route('admin.dashboard') }}">
+                                <i class="bi bi-shield-lock-fill"></i> Panel Admina
+                            </a>
+                        </li>
+                    @endif
                     @if(Auth::user()->isOwner())
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('biznes.lokale.index') }}">

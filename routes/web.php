@@ -41,4 +41,14 @@ Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(f
     Route::resource('lokale.blacklist', BlacklistController::class)->except(['show', 'edit', 'update'])->parameters(['lokale' => 'business', 'blacklist' => 'blacklist']);
 });
 
+use App\Http\Controllers\AdminController;
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/biznesy', [AdminController::class, 'businesses'])->name('businesses');
+    Route::post('/biznesy/{business}/approve', [AdminController::class, 'approveBusiness'])->name('businesses.approve');
+    Route::post('/biznesy/{business}/reject', [AdminController::class, 'rejectBusiness'])->name('businesses.reject');
+    Route::get('/uzytkownicy', [AdminController::class, 'users'])->name('users');
+});
+
 require __DIR__.'/auth.php';

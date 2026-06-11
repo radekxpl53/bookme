@@ -19,6 +19,7 @@ class Business extends Model
             'lat',
             'lon',
             'owner_id',
+            'is_approved',
         ];
 
     protected function casts(): array
