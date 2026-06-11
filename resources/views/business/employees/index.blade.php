@@ -41,10 +41,13 @@
                         </p>
 
                         <div class="d-flex gap-2">
+                            <a href="{{ route('biznes.lokale.pracownicy.portfolio.index', [$business, $employee]) }}" class="btn btn-sm btn-outline-info flex-grow-1">
+                                <i class="bi bi-images"></i> Portfolio
+                            </a>
                             <a href="{{ route('biznes.lokale.pracownicy.edit', [$business, $employee]) }}" class="btn btn-sm btn-outline-primary flex-grow-1">
                                 Edytuj
                             </a>
-                            <form action="{{ route('biznes.lokale.pracownicy.destroy', [$business, $employee]) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć tego pracownika?');">
+                            <form action="{{ route('biznes.lokale.pracownicy.destroy', [$business, $employee]) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć tego pracownika?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>

@@ -48,14 +48,21 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\BlacklistController;
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BusinessPhotoController;
+use App\Http\Controllers\EmployeePortfolioController;
+
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
     Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
     Route::resource('lokale.uslugi', ServiceController::class)->except(['show'])->parameters(['lokale' => 'business', 'uslugi' => 'service']);
     Route::resource('lokale.pracownicy', EmployeeController::class)->except(['show'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee']);
     Route::resource('lokale.blacklist', BlacklistController::class)->except(['show', 'edit', 'update'])->parameters(['lokale' => 'business', 'blacklist' => 'blacklist']);
+    
+    Route::resource('lokale.zdjecia', BusinessPhotoController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'zdjecia' => 'photo']);
+    Route::resource('lokale.pracownicy.portfolio', EmployeePortfolioController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee', 'portfolio' => 'portfolio']);
 });
 
-use App\Http\Controllers\AdminController;
+
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');

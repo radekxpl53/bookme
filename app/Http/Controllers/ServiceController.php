@@ -45,7 +45,7 @@ class ServiceController extends Controller
 
         Service::create($validated);
 
-        return redirect()->route('biznes.uslugi.index', $business)
+        return redirect()->route('biznes.lokale.uslugi.index', $business)
                          ->with('success', 'Usługa została dodana!');
     }
 
@@ -80,7 +80,7 @@ class ServiceController extends Controller
 
         $service->update($validated);
 
-        return redirect()->route('biznes.uslugi.index', $business)
+        return redirect()->route('biznes.lokale.uslugi.index', $business)
                          ->with('success', 'Usługa została zaktualizowana!');
     }
 
@@ -96,7 +96,7 @@ class ServiceController extends Controller
 
         $service->delete();
 
-        return redirect()->route('biznes.uslugi.index', $business)
+        return redirect()->route('biznes.lokale.uslugi.index', $business)
                          ->with('success', 'Usługa została usunięta!');
     }
 }
