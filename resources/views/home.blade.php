@@ -10,7 +10,7 @@
             <h1 class="fw-bold mb-2">Znajdź i zarezerwuj wizytę w kilka chwil</h1>
             <p class="text-muted mb-4">Fryzjer, kosmetyczka, masaż — wszystko w jednym miejscu.</p>
 
-            <form action="{{ route('home') }}" method="GET" class="row g-2 justify-content-center">
+            <form action="{{ route('szukaj') }}" method="GET" class="row g-2 justify-content-center">
                 <div class="col-md-4">
                     <input type="text" name="usluga" class="form-control"
                            placeholder="Czego szukasz? (np. strzyżenie)">
@@ -20,7 +20,7 @@
                            placeholder="Gdzie? (miasto)">
                 </div>
                 <div class="col-md-2">
-                    <input type="date" name="termin" class="form-control">
+                    <input type="date" name="data" class="form-control">
                 </div>
                 <div class="col-md-2 d-grid">
                     <button type="submit" class="btn btn-primary">Szukaj</button>
@@ -33,7 +33,7 @@
     <div class="row g-3 mb-5">
         @foreach($categories as $category)
             <div class="col-6 col-md-4 col-lg-2">
-                <a href="{{ route('home') }}" class="text-decoration-none">
+                <a href="{{ route('szukaj', ['kategoria' => $category['name']]) }}" class="text-decoration-none">
                     <div class="card shadow-sm h-100 text-center">
                         <div class="card-body">
                             <i class="bi {{ $category['icon'] }} fs-2 text-primary"></i>
