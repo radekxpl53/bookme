@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Appointment;
+use App\Models\Employee;
 use App\Models\Service;
 use Carbon\Carbon;
 
@@ -10,7 +11,7 @@ class AvailabilityService
 {
     const KROK_MINUT = 15;
 
-    public function znajdzTerminy(Service $service, Carbon $dzien, ?string $od = null, ?string $do = null, int $limit = 6): array
+    public function znajdzTerminy(Service $service, Carbon $dzien, ?string $od = null, ?string $do = null, int $limit = 6, ?int $employeeId = null): array
     {
         $numerDnia = $dzien->dayOfWeekIso;
 
@@ -18,6 +19,10 @@ class AvailabilityService
 
         foreach ($service->employees as $employee) {
             if (! $employee->is_active) {
+                continue;
+            }
+
+            if ($employeeId && $employee->id !== $employeeId) {
                 continue;
             }
 
@@ -76,5 +81,55 @@ class AvailabilityService
         usort($terminy, fn ($a, $b) => $a['time']->timestamp <=> $b['time']->timestamp);
 
         return array_slice($terminy, 0, $limit);
+    }
+
+    public function znajdzTerminyWZakresie(Service $service, Carbon $od, Carbon $doDnia, ?string $godzOd = null, ?string $godzDo = null, int $limit = 6, ?int $employeeId = null): array
+    {
+        $terminy = [];
+
+        $dzien = $od->copy()->startOfDay();
+        $koniec = $doDnia->copy()->startOfDay();
+        if ($koniec->lessThan($dzien)) {
+            $koniec = $dzien->copy();
+        }
+        if ($koniec->diffInDays($dzien) > 31) {
+            $koniec = $dzien->copy()->addDays(31);
+        }
+
+        while ($dzien->lessThanOrEqualTo($koniec) && count($terminy) < $limit) {
+            $dzienne = $this->znajdzTerminy($service, $dzien, $godzOd, $godzDo, $limit - count($terminy), $employeeId);
+            $terminy = array_merge($terminy, $dzienne);
+            $dzien->addDay();
+        }
+
+        return $terminy;
+    }
+
+    public function czyWolny(Service $service, Employee $employee, Carbon $start): bool
+    {
+        if (! $employee->is_active || $start->isPast()) {
+            return false;
+        }
+
+        $finish = $start->copy()->addMinutes($service->duration_minutes);
+
+        $godziny = $employee->workingHours->firstWhere('day_of_week', $start->dayOfWeekIso);
+        if (! $godziny) {
+            return false;
+        }
+
+        $startPracy = $start->copy()->setTimeFromTimeString($godziny->start_time);
+        $koniecPracy = $start->copy()->setTimeFromTimeString($godziny->end_time);
+        if ($start->lessThan($startPracy) || $finish->greaterThan($koniecPracy)) {
+            return false;
+        }
+
+        $koliduje = Appointment::where('employee_id', $employee->id)
+            ->where('status', '!=', 'cancelled')
+            ->where('start_at', '<', $finish)
+            ->where('finish_at', '>', $start)
+            ->exists();
+
+        return ! $koliduje;
     }
 }

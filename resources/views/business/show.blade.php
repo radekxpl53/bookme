@@ -22,7 +22,7 @@
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="#" class="btn btn-primary">
+                    <a href="{{ route('rezerwacja.create', $business) }}" class="btn btn-primary">
                         <i class="bi bi-calendar-check"></i> Zarezerwuj wizytę
                     </a>
                 </div>
@@ -76,7 +76,7 @@
                         </div>
                         <div class="text-end">
                             <div class="fw-bold mb-1">{{ number_format($service->price, 2) }} zł</div>
-                            <a href="#" class="btn btn-outline-primary btn-sm">Wybierz</a>
+                            <a href="{{ route('rezerwacja.create', ['business' => $business, 'service_id' => $service->id]) }}" class="btn btn-outline-primary btn-sm">Wybierz</a>
                         </div>
                     </div>
                 </div>

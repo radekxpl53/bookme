@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
         if ($owner->businesses()->count() === 0) {
             $businesses = \App\Models\Business::factory(5)->create([
                 'owner_id' => $owner->id,
+                'is_approved' => true,
             ]);
 
             foreach ($businesses as $business) {
