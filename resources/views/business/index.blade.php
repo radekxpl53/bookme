@@ -59,6 +59,9 @@
                             <td class="align-middle fw-bold">
                                 {{ $business->name }} <br>
                                 <span class="badge bg-secondary fw-normal">{{ $business->category }}</span>
+                                @if(!$business->is_approved)
+                                    <span class="badge bg-warning text-dark fw-normal"><i class="bi bi-hourglass-split"></i> Oczekuje na zatwierdzenie</span>
+                                @endif
                             </td>
                             <td class="align-middle">{{ $business->address }}</td>
                             <td class="text-end">
@@ -74,6 +77,11 @@
                                         Opcje
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('biznes.lokale.zdjecia.index', $business->id) }}">
+                                                <i class="bi bi-images me-2 text-primary"></i> Zdjęcia salonu
+                                            </a>
+                                        </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('biznes.lokale.edit', $business->id) }}">
                                                 <i class="bi bi-pencil-square me-2 text-secondary"></i> Edytuj lokal

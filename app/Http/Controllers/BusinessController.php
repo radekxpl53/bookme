@@ -53,7 +53,7 @@ class BusinessController extends Controller
         Business::create($validated);
 
         return redirect()->route('biznes.lokale.index')
-                         ->with('success', 'Twój nowy salon został pomyślnie dodany!');
+                         ->with('success', 'Wniosek o dodanie salonu został wysłany! Lokal pojawi się w wyszukiwarce po zatwierdzeniu przez administratora.');
     }
 
     public function edit($id)

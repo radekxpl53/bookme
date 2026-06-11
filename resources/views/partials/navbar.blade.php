@@ -29,6 +29,12 @@
                                 <i class="bi bi-shop"></i> Moje lokale
                             </a>
                         </li>
+                    @elseif(!Auth::user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link text-success fw-bold" href="{{ route('biznes.lokale.create') }}">
+                                <i class="bi bi-plus-circle"></i> Dodaj swój salon
+                            </a>
+                        </li>
                     @endif
                     <li class="nav-item">
                         <span class="nav-link text-white">Witaj, {{ Auth::user()->first_name }}!</span>
