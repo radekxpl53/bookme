@@ -38,16 +38,6 @@ class BusinessCalendarController extends Controller
             $query->where('employee_id', $request->employee_id);
         }
 
-        if ($request->filled('start')) {
-            $start = \Carbon\Carbon::parse($request->start)->toDateTimeString();
-            $query->where('start_at', '>=', $start);
-        }
-
-        if ($request->filled('end')) {
-            $end = \Carbon\Carbon::parse($request->end)->toDateTimeString();
-            $query->where('start_at', '<', $end);
-        }
-
         $appointments = $query->get();
 
         $events = $appointments->map(function ($apt) {

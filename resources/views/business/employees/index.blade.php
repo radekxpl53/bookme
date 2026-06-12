@@ -40,9 +40,12 @@
                             <i class="bi bi-briefcase"></i> {{ $employee->services_count }} {{ $employee->services_count == 1 ? 'usługa' : 'usług' }}
                         </p>
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <a href="{{ route('biznes.lokale.pracownicy.portfolio.index', [$business, $employee]) }}" class="btn btn-sm btn-outline-info flex-grow-1">
                                 <i class="bi bi-images"></i> Portfolio
+                            </a>
+                            <a href="{{ route('biznes.lokale.pracownicy.urlopy.index', [$business, $employee]) }}" class="btn btn-sm btn-outline-warning text-dark flex-grow-1">
+                                <i class="bi bi-calendar-x"></i> Urlopy
                             </a>
                             <a href="{{ route('biznes.lokale.pracownicy.edit', [$business, $employee]) }}" class="btn btn-sm btn-outline-primary flex-grow-1">
                                 Edytuj
@@ -50,7 +53,7 @@
                             <form action="{{ route('biznes.lokale.pracownicy.destroy', [$business, $employee]) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć tego pracownika?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">Usuń</button>
                             </form>
                         </div>
                     </div>

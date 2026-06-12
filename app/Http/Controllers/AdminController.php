@@ -15,8 +15,20 @@ class AdminController extends Controller
         $totalUsers = User::count();
         $totalOwners = User::whereHas('businesses')->count();
 
+        // Dodatkowe statystyki z wizyt
+        $totalAppointments = \App\Models\Appointment::count();
+        $completedAppointments = \App\Models\Appointment::where('status', 'completed')->count();
+        $completionRate = $totalAppointments > 0 ? round(($completedAppointments / $totalAppointments) * 100) : 0;
+
+        // Dodatkowe statystyki z opinii
+        $totalBusinessReviews = \App\Models\BusinessReview::count();
+        $totalEmployeeReviews = \App\Models\EmployeeReview::count();
+        $totalReviews = $totalBusinessReviews + $totalEmployeeReviews;
+
         return view('admin.dashboard', compact(
-            'pendingBusinesses', 'totalBusinesses', 'totalUsers', 'totalOwners'
+            'pendingBusinesses', 'totalBusinesses', 'totalUsers', 'totalOwners',
+            'totalAppointments', 'completedAppointments', 'completionRate',
+            'totalReviews'
         ));
     }
 

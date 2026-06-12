@@ -31,6 +31,16 @@ class AvailabilityService
                 continue;
             }
 
+            // Sprawdzamy czy dany dzień wypada w trakcie urlopu pracownika
+            $jestNaUrlopie = $employee->leaves()
+                ->where('start_date', '<=', $dzien->toDateString())
+                ->where('end_date', '>=', $dzien->toDateString())
+                ->exists();
+
+            if ($jestNaUrlopie) {
+                continue;
+            }
+
             $start = $dzien->copy()->setTimeFromTimeString($godziny->start_time);
             $koniec = $dzien->copy()->setTimeFromTimeString($godziny->end_time);
 
@@ -115,6 +125,15 @@ class AvailabilityService
 
         $godziny = $employee->workingHours->firstWhere('day_of_week', $start->dayOfWeekIso);
         if (! $godziny) {
+            return false;
+        }
+
+        $jestNaUrlopie = $employee->leaves()
+            ->where('start_date', '<=', $start->toDateString())
+            ->where('end_date', '>=', $start->toDateString())
+            ->exists();
+
+        if ($jestNaUrlopie) {
             return false;
         }
 

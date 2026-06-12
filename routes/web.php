@@ -54,6 +54,7 @@ Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(f
     
     Route::resource('lokale.zdjecia', BusinessPhotoController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'zdjecia' => 'photo']);
     Route::resource('lokale.pracownicy.portfolio', EmployeePortfolioController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee', 'portfolio' => 'portfolio']);
+    Route::resource('lokale.pracownicy.urlopy', \App\Http\Controllers\EmployeeLeaveController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee', 'urlopy' => 'urlopy']);
     
     Route::get('lokale/{business}/kalendarz', [App\Http\Controllers\BusinessCalendarController::class, 'index'])->name('lokale.kalendarz.index');
     Route::get('lokale/{business}/kalendarz/events', [App\Http\Controllers\BusinessCalendarController::class, 'events'])->name('lokale.kalendarz.events');
