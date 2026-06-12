@@ -8,6 +8,7 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessPublicController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ClientAppointmentController;
 use App\Http\Controllers\ProfileController;
 
 // DO USUNIĘCIA POTEM, JAK ZADZIAŁA ZWYKLE LOGOWANIE
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/rezerwacja/sukces/{appointment}', [BookingController::class, 'success'])->name('rezerwacja.success');
     Route::get('/rezerwacja/{business}', [BookingController::class, 'create'])->name('rezerwacja.create');
     Route::post('/rezerwacja', [BookingController::class, 'store'])->name('rezerwacja.store');
+
+    Route::get('/moje-wizyty', [ClientAppointmentController::class, 'index'])->name('klient.wizyty.index');
+    Route::patch('/moje-wizyty/{appointment}/anuluj', [ClientAppointmentController::class, 'cancel'])->name('klient.wizyty.anuluj');
 });
 
 Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function () {

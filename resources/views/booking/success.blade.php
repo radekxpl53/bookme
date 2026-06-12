@@ -37,8 +37,8 @@
                 </ul>
 
                 <div class="card-body d-flex justify-content-between">
-                    <a href="{{ route('lokal.show', $appointment->service->business) }}" class="btn btn-outline-primary">Wróć do lokalu</a>
-                    <a href="{{ route('szukaj') }}" class="btn btn-primary">Szukaj dalej</a>
+                    <a href="{{ route('szukaj') }}" class="btn btn-outline-primary">Szukaj dalej</a>
+                    <a href="{{ route('klient.wizyty.index') }}" class="btn btn-primary">Moje wizyty</a>
                 </div>
             </div>
         </div>
