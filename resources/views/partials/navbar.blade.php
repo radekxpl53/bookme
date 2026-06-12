@@ -36,6 +36,13 @@
                             </a>
                         </li>
                     @endif
+                    @if(!Auth::user()->isAdmin())
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('klient.wizyty.index') }}">
+                                <i class="bi bi-calendar-check"></i> Moje wizyty
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <span class="nav-link text-white">Witaj, {{ Auth::user()->first_name }}!</span>
                     </li>
