@@ -60,7 +60,7 @@
                                 @if($user->isAdmin())
                                     <span class="badge bg-danger">Admin</span>
                                 @elseif($user->isOwner())
-                                    <span class="badge bg-info text-dark">Właściciel ({{ $user->businesses()->count() }} lokali)</span>
+                                    <span class="badge bg-info text-dark">Właściciel ({{ $user->businesses_count }} lokali)</span>
                                 @else
                                     <span class="badge bg-secondary">Klient</span>
                                 @endif

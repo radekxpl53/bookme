@@ -9,12 +9,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
-    public function index(Business $business)
+    private function authorizeOwner(Business $business): void
     {
         if ($business->owner_id !== Auth::id()) {
             abort(403);
         }
+    }
 
+    public function index(Business $business)
+    {
+        $this->authorizeOwner($business);
         $services = $business->services;
 
         return view('business.services.index', compact('business', 'services'));
@@ -22,18 +26,14 @@ class ServiceController extends Controller
 
     public function create(Business $business)
     {
-        if ($business->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwner($business);
 
         return view('business.services.create', compact('business'));
     }
 
     public function store(Request $request, Business $business)
     {
-        if ($business->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwner($business);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -51,9 +51,7 @@ class ServiceController extends Controller
 
     public function edit(Business $business, Service $service)
     {
-        if ($business->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwner($business);
 
         if ($service->business_id !== $business->id) {
             abort(404);
@@ -64,9 +62,7 @@ class ServiceController extends Controller
 
     public function update(Request $request, Business $business, Service $service)
     {
-        if ($business->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwner($business);
 
         if ($service->business_id !== $business->id) {
             abort(404);
@@ -86,9 +82,7 @@ class ServiceController extends Controller
 
     public function destroy(Business $business, Service $service)
     {
-        if ($business->owner_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorizeOwner($business);
 
         if ($service->business_id !== $business->id) {
             abort(404);

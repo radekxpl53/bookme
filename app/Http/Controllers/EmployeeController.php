@@ -48,7 +48,7 @@ class EmployeeController extends Controller
             'services.*' => 'exists:services,id',
             'working_hours' => 'nullable|array',
             'working_hours.*.start_time' => 'nullable|date_format:H:i',
-            'working_hours.*.end_time' => 'nullable|date_format:H:i',
+            'working_hours.*.end_time' => 'nullable|date_format:H:i|after:working_hours.*.start_time',
         ]);
 
         $employee = Employee::create([
@@ -110,7 +110,7 @@ class EmployeeController extends Controller
             'services.*' => 'exists:services,id',
             'working_hours' => 'nullable|array',
             'working_hours.*.start_time' => 'nullable|date_format:H:i',
-            'working_hours.*.end_time' => 'nullable|date_format:H:i',
+            'working_hours.*.end_time' => 'nullable|date_format:H:i|after:working_hours.*.start_time',
         ]);
 
         $employee->update([
