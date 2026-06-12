@@ -63,6 +63,6 @@ class Employee extends Model
 
     public function reviewImages(): BelongsToMany
     {
-        return $this->belongsToMany(Image::class, 'employee_reviews_images', 'employee_id', 'images_id');
+        return $this->belongsToMany(Image::class, 'employee_reviews_images', 'employee_id', 'images_id')->withPivot('user_id');
     }
 }

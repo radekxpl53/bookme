@@ -90,6 +90,6 @@ class Business extends Model
 
     public function reviewImages(): BelongsToMany
     {
-        return $this->belongsToMany(Image::class, 'businesse_reviews_images', 'business_id', 'images_id');
+        return $this->belongsToMany(Image::class, 'businesse_reviews_images', 'business_id', 'images_id')->withPivot('user_id');
     }
 }

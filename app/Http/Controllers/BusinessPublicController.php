@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Business;
+use App\Models\BusinessReview;
+use Illuminate\Support\Facades\Auth;
 
 class BusinessPublicController extends Controller
 {
@@ -12,17 +14,24 @@ class BusinessPublicController extends Controller
 
         $business->load([
             'services',
-            'employees',
+            'employees.reviews.user',
+            'employees.reviewImages',
             'reviews.user',
+            'reviewImages',
         ]);
 
         $averageRating = $business->reviews->avg('rating');
         $reviewsCount  = $business->reviews->count();
 
+        $mojaOpinia = Auth::check()
+            ? BusinessReview::where('business_id', $business->id)->where('user_id', Auth::id())->first()
+            : null;
+
         return view('business.show', compact(
             'business',
             'averageRating',
-            'reviewsCount'
+            'reviewsCount',
+            'mojaOpinia'
         ));
     }
 }
