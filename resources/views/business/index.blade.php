@@ -43,79 +43,92 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Nazwa salonu</th>
-                        <th>Adres</th>
-                        <th class="text-end">Akcje</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($businesses as $business)
-                        <tr>
-                            <td class="align-middle fw-bold">
-                                {{ $business->name }} <br>
-                                <span class="badge bg-secondary fw-normal">{{ $business->category }}</span>
-                                @if(!$business->is_approved)
-                                    <span class="badge bg-warning text-dark fw-normal"><i class="bi bi-hourglass-split"></i> Oczekuje na zatwierdzenie</span>
-                                @endif
-                            </td>
-                            <td class="align-middle">{{ $business->address }}</td>
-                            <td class="text-end">
-                                <div class="btn-group shadow-sm" role="group">
-                                    <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-sm btn-light border" title="Zarządzaj usługami">
-                                        <i class="bi bi-card-list text-primary"></i> Usługi
-                                    </a>
-                                    <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-sm btn-light border" title="Zarządzaj pracownikami">
-                                        <i class="bi bi-people text-info"></i> Pracownicy
-                                    </a>
-                                    
-                                    <button type="button" class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Opcje
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('biznes.lokale.zdjecia.index', $business->id) }}">
-                                                <i class="bi bi-images me-2 text-primary"></i> Zdjęcia salonu
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('biznes.lokale.edit', $business->id) }}">
-                                                <i class="bi bi-pencil-square me-2 text-secondary"></i> Edytuj lokal
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ route('biznes.lokale.blacklist.index', $business->id) }}">
-                                                <i class="bi bi-person-x me-2 text-dark"></i> Czarna lista
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon? Wszystkie dane zostaną trwale wykasowane!');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger">
-                                                    <i class="bi bi-trash me-2"></i> Usuń lokal
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center py-4 text-muted">
-                                Nie masz jeszcze żadnych dodanych lokali.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <div class="row g-4">
+        @forelse($businesses as $business)
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card h-100 shadow-sm border-0 bg-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-bold mb-0 text-truncate" title="{{ $business->name }}">
+                                <i class="bi bi-shop text-primary me-2"></i>{{ $business->name }}
+                            </h5>
+                            @if(!$business->is_approved)
+                                <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Oczekuje</span>
+                            @endif
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-light text-dark border"><i class="bi bi-tag-fill text-secondary me-1"></i> {{ $business->category }}</span>
+                        </div>
+                        
+                        <p class="card-text text-muted small mb-4">
+                            <i class="bi bi-geo-alt-fill me-1"></i> {{ $business->address }}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 pt-0 pb-3">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ route('biznes.lokale.kalendarz.index', $business->id) }}" class="btn btn-primary btn-sm flex-grow-1 fw-bold">
+                                <i class="bi bi-calendar3"></i> Kalendarz
+                            </a>
+                            
+                            <div class="btn-group flex-grow-1" role="group">
+                                <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-light btn-sm border" title="Usługi">
+                                    <i class="bi bi-card-list text-primary"></i>
+                                </a>
+                                <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-light btn-sm border" title="Pracownicy">
+                                    <i class="bi bi-people text-info"></i>
+                                </a>
+                                
+                                <button type="button" class="btn btn-light btn-sm border dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Więcej
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('biznes.lokale.opinie.index', $business->id) }}">
+                                            <i class="bi bi-star me-2 text-warning"></i> Opinie o salonie
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('biznes.lokale.zdjecia.index', $business->id) }}">
+                                            <i class="bi bi-images me-2 text-primary"></i> Zdjęcia salonu
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('biznes.lokale.edit', $business->id) }}">
+                                            <i class="bi bi-pencil-square me-2 text-secondary"></i> Edytuj lokal
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('biznes.lokale.blacklist.index', $business->id) }}">
+                                            <i class="bi bi-person-x me-2 text-dark"></i> Czarna lista
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon? Wszystkie dane zostaną trwale wykasowane!');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bi bi-trash me-2"></i> Usuń lokal
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-12">
+                <div class="alert alert-light border text-center py-5">
+                    <i class="bi bi-shop-window display-4 text-muted mb-3 d-block"></i>
+                    <h5 class="text-muted">Nie masz jeszcze żadnych dodanych lokali.</h5>
+                    <p class="text-muted mb-4">Dodaj swój pierwszy salon, aby móc przyjmować rezerwacje.</p>
+                    <a href="{{ route('biznes.lokale.create') }}" class="btn btn-primary">Dodaj nowy lokal</a>
+                </div>
+            </div>
+        @endforelse
     </div>
 </div>
 @endsection
