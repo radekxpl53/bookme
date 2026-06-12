@@ -37,11 +37,11 @@ class AdminController extends Controller
         $status = $request->get('status', 'pending');
 
         if ($status === 'pending') {
-            $businesses = Business::where('is_approved', false)->latest()->get();
+            $businesses = Business::with('owner')->where('is_approved', false)->latest()->get();
         } elseif ($status === 'approved') {
-            $businesses = Business::where('is_approved', true)->latest()->get();
+            $businesses = Business::with('owner')->where('is_approved', true)->latest()->get();
         } else {
-            $businesses = Business::latest()->get();
+            $businesses = Business::with('owner')->latest()->get();
         }
 
         return view('admin.businesses', compact('businesses', 'status'));
@@ -55,7 +55,6 @@ class AdminController extends Controller
 
     public function rejectBusiness(Business $business)
     {
-        // Opcjonalnie mozna dodac powod odrzucenia (mail do uzytkownika), na razie po prostu usuwamy
         $business->delete();
         return back()->with('success', "Lokal został odrzucony i usunięty ze zgłoszeń.");
     }
@@ -64,7 +63,7 @@ class AdminController extends Controller
     {
         $role = $request->get('role', 'all');
 
-        $query = User::query();
+        $query = User::withCount('businesses');
 
         if ($role === 'owners') {
             $query->whereHas('businesses');
