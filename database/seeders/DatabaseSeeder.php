@@ -50,6 +50,15 @@ class DatabaseSeeder extends Seeder
         $client = User::where('email', 'klient@bookme.test')->first();
 
         if ($owner->businesses()->count() === 0) {
+            $recenzenci = User::factory(8)->create();
+            $komentarze = [
+                'Bardzo polecam, obsługa na medal!',
+                'Profesjonalnie i miło, wrócę na pewno.',
+                'Czysto, sprawnie i w dobrej cenie.',
+                'Świetny efekt, jestem bardzo zadowolony.',
+                'Mili ludzie, terminowo i solidnie.',
+            ];
+
             $businesses = \App\Models\Business::factory(5)->create([
                 'owner_id' => $owner->id,
                 'is_approved' => true,
@@ -96,13 +105,25 @@ class DatabaseSeeder extends Seeder
                     }
                 }
 
-                foreach (range(1, rand(2, 5)) as $i) {
+                foreach ($recenzenci->random(rand(3, 5)) as $recenzent) {
                     \App\Models\BusinessReview::create([
                         'business_id' => $business->id,
-                        'user_id' => $client->id,
+                        'user_id' => $recenzent->id,
                         'rating' => rand(3, 5),
-                        'comment' => 'Bardzo polecam, obsługa na medal!',
+                        'comment' => fake()->randomElement($komentarze),
                     ]);
+                }
+
+                foreach ($employees as $employee) {
+                    foreach ($recenzenci->random(rand(1, 3)) as $recenzent) {
+                        \App\Models\EmployeeReview::create([
+                            'employee_id' => $employee->id,
+                            'user_id' => $recenzent->id,
+                            'service' => $employee->services->first()?->name,
+                            'rating' => rand(3, 5),
+                            'comment' => fake()->randomElement($komentarze),
+                        ]);
+                    }
                 }
             }
         }

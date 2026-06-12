@@ -89,6 +89,15 @@
                                 <span class="badge {{ $statusy[$wizyta->status]['class'] ?? 'bg-secondary' }}">
                                     {{ $statusy[$wizyta->status]['label'] ?? $wizyta->status }}
                                 </span>
+
+                                @if($wizyta->status === 'completed')
+                                    <div class="mt-2">
+                                        <a href="{{ route('klient.opinia.create', $wizyta) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-star"></i>
+                                            {{ $ocenieniPracownicy->contains($wizyta->employee_id) ? 'Edytuj opinię' : 'Oceń specjalistę' }}
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

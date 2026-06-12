@@ -86,28 +86,106 @@
         </div>
 
         <div class="tab-pane fade" id="employees" role="tabpanel">
-            <div class="row g-3">
-                @forelse($business->employees as $employee)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <i class="bi bi-person-circle fs-1 text-secondary"></i>
-                                <h6 class="mt-2 mb-0">{{ $employee->name }}</h6>
-                                <p class="text-muted small mb-0">{{ $employee->specialization }}</p>
+            @forelse($business->employees as $employee)
+                @php
+                    $empAvg = $employee->reviews->avg('rating');
+                    $empCount = $employee->reviews->count();
+                @endphp
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-person-circle fs-1 text-secondary me-3"></i>
+                            <div>
+                                <h6 class="mb-0">{{ $employee->name }}</h6>
+                                <p class="text-muted small mb-1">{{ $employee->specialization }}</p>
+                                <span>
+                                    @include('partials.stars', ['rating' => round($empAvg ?? 0)])
+                                    <span class="fw-bold">{{ $empAvg ? number_format($empAvg, 1) : '—' }}</span>
+                                    <span class="text-muted small">({{ $empCount }} opinii)</span>
+                                </span>
                             </div>
                         </div>
+
+                        @if($empCount > 0)
+                            <hr>
+                            @foreach($employee->reviews as $review)
+                                @include('partials.review-card', [
+                                    'review' => $review,
+                                    'images' => $employee->reviewImages->filter(fn ($img) => $img->pivot->user_id == $review->user_id),
+                                ])
+                            @endforeach
+                        @endif
                     </div>
-                @empty
-                    <div class="col-12">
-                        <p class="text-muted py-3">Brak pracowników do wyświetlenia.</p>
-                    </div>
-                @endforelse
-            </div>
+                </div>
+            @empty
+                <p class="text-muted py-3">Brak pracowników do wyświetlenia.</p>
+            @endforelse
         </div>
 
         <div class="tab-pane fade" id="reviews" role="tabpanel">
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    @auth
+                        <h6 class="mb-3">{{ $mojaOpinia ? 'Twoja opinia o lokalu' : 'Dodaj opinię o lokalu' }}</h6>
+
+                        @if($mojaOpinia)
+                            <div class="alert alert-info py-2 small">
+                                <i class="bi bi-pencil"></i> Już oceniłeś ten lokal — możesz zaktualizować ocenę.
+                            </div>
+                        @endif
+
+                        <form action="{{ route('lokal.opinia.store', $business) }}" method="POST">
+                            @csrf
+                            <div class="mb-2">
+                                @include('partials.star-input', ['name' => 'rating', 'value' => $mojaOpinia->rating ?? ''])
+                            </div>
+                            <textarea name="comment" rows="2" class="form-control mb-2"
+                                      placeholder="Komentarz (opcjonalnie)">{{ old('comment', $mojaOpinia->comment ?? '') }}</textarea>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="bi bi-send"></i> Zapisz opinię
+                            </button>
+                        </form>
+
+                        @if($mojaOpinia)
+                            <hr>
+                            @php
+                                $mojeZdjecia = $business->reviewImages->filter(fn ($img) => $img->pivot->user_id == auth()->id());
+                            @endphp
+                            @if($mojeZdjecia->count())
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    @foreach($mojeZdjecia as $img)
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($img->file_name) }}"
+                                             alt="zdjęcie opinii" class="rounded border" role="button"
+                                             data-bs-toggle="modal" data-bs-target="#imageModal"
+                                             data-img="{{ \Illuminate\Support\Facades\Storage::url($img->file_name) }}"
+                                             style="width: 80px; height: 80px; object-fit: cover;">
+                                    @endforeach
+                                </div>
+                            @endif
+                            <form action="{{ route('lokal.opinia.zdjecie', $business) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="input-group input-group-sm">
+                                    <input type="file" name="photo" accept="image/*" class="form-control" required>
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="bi bi-image"></i> Dodaj zdjęcie
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
+                    @else
+                        <p class="mb-0 text-muted">
+                            <a href="{{ route('login') }}">Zaloguj się</a>, aby dodać opinię o lokalu.
+                        </p>
+                    @endauth
+                </div>
+            </div>
+
             @forelse($business->reviews as $review)
-                @include('partials.review-card', ['review' => $review])
+                @include('partials.review-card', [
+                    'review' => $review,
+                    'images' => $business->reviewImages->filter(fn ($img) => $img->pivot->user_id == $review->user_id),
+                ])
             @empty
                 <p class="text-muted py-3">Ten lokal nie ma jeszcze żadnych opinii.</p>
             @endforelse
@@ -129,6 +207,8 @@
 @endsection
 
 @section('scripts')
+@include('partials.star-input-assets')
+@include('partials.image-modal')
 @if($business->lat && $business->lon)
 <script>
     document.addEventListener('DOMContentLoaded', function () {

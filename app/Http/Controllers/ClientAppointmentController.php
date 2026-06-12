@@ -23,7 +23,9 @@ class ClientAppointmentController extends Controller
             ->reject(fn ($a) => $a->start_at->isFuture() && in_array($a->status, ['pending', 'confirmed']))
             ->values();
 
-        return view('client.appointments', compact('nadchodzace', 'historia'));
+        $ocenieniPracownicy = Auth::user()->employeeReviews->pluck('employee_id');
+
+        return view('client.appointments', compact('nadchodzace', 'historia', 'ocenieniPracownicy'));
     }
 
     public function cancel(Appointment $appointment)
