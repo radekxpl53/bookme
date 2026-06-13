@@ -32,7 +32,7 @@
                         </div>
                     @endif
 
-                    @if($opinia)
+                    @if($review)
                         <div class="alert alert-info py-2 small">
                             <i class="bi bi-pencil"></i> Tego specjalistę już oceniłeś — możesz zaktualizować ocenę.
                         </div>
@@ -42,11 +42,11 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label fw-semibold d-block">Ocena *</label>
-                            @include('partials.star-input', ['name' => 'rating', 'value' => $opinia->rating ?? ''])
+                            @include('partials.star-input', ['name' => 'rating', 'value' => $review->rating ?? ''])
                         </div>
                         <div class="mb-4">
                             <textarea name="comment" rows="3" class="form-control"
-                                      placeholder="Komentarz (opcjonalnie)">{{ old('comment', $opinia->comment ?? '') }}</textarea>
+                                      placeholder="Komentarz (opcjonalnie)">{{ old('comment', $review->comment ?? '') }}</textarea>
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -57,16 +57,16 @@
                         </div>
                     </form>
 
-                    @if($opinia)
+                    @if($review)
                         <hr class="my-4">
                         <h6 class="mb-2">Zdjęcia</h6>
 
                         @php
-                            $mojeZdjecia = $appointment->employee->reviewImages->filter(fn ($img) => $img->pivot->user_id == auth()->id());
+                            $myPhotos = $appointment->employee->reviewImages->filter(fn ($img) => $img->pivot->user_id == auth()->id());
                         @endphp
-                        @if($mojeZdjecia->count())
+                        @if($myPhotos->count())
                             <div class="d-flex flex-wrap gap-2 mb-3">
-                                @foreach($mojeZdjecia as $img)
+                                @foreach($myPhotos as $img)
                                     <img src="{{ \Illuminate\Support\Facades\Storage::url($img->file_name) }}"
                                          alt="zdjęcie opinii" class="rounded border" role="button"
                                          data-bs-toggle="modal" data-bs-target="#imageModal"

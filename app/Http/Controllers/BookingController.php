@@ -26,24 +26,24 @@ class BookingController extends Controller
             ? $business->services->firstWhere('id', (int) $request->input('service_id'))
             : null;
 
-        $pracownicy = $service
+        $specialists = $service
             ? $business->employees->filter(fn ($e) => $e->services->contains('id', $service->id))->values()
             : collect();
 
         $employee = null;
         if ($service && $request->filled('employee_id')) {
-            $employee = $pracownicy->firstWhere('id', (int) $request->input('employee_id'));
+            $employee = $specialists->firstWhere('id', (int) $request->input('employee_id'));
         }
 
-        $dzien = $request->filled('date')
+        $day = $request->filled('date')
             ? Carbon::parse($request->input('date'))->startOfDay()
             : Carbon::today();
 
         $time = $request->input('time');
 
         if ($service && ! $time) {
-            foreach ($pracownicy as $e) {
-                $e->terminy = $availability->znajdzTerminy($service, $dzien, null, null, 12, $e->id);
+            foreach ($specialists as $e) {
+                $e->slots = $availability->findSlots($service, $day, null, null, 12, $e->id);
             }
         }
 
@@ -56,7 +56,7 @@ class BookingController extends Controller
         }
 
         return view('booking.create', compact(
-            'business', 'service', 'pracownicy', 'employee', 'dzien', 'time', 'step'
+            'business', 'service', 'specialists', 'employee', 'day', 'time', 'step'
         ));
     }
 
@@ -74,19 +74,19 @@ class BookingController extends Controller
 
         $start = Carbon::parse($validated['date'].' '.$validated['time']);
 
-        $bledy = [];
+        $problems = [];
         if ($employee->business_id !== $service->business_id) {
-            $bledy[] = 'Wybrany pracownik nie należy do tego lokalu.';
+            $problems[] = 'Wybrany pracownik nie należy do tego lokalu.';
         }
         if (! $employee->services->contains('id', $service->id)) {
-            $bledy[] = 'Wybrany pracownik nie wykonuje tej usługi.';
+            $problems[] = 'Wybrany pracownik nie wykonuje tej usługi.';
         }
-        if (! $availability->czyWolny($service, $employee, $start)) {
-            $bledy[] = 'Ten termin jest już niedostępny. Wybierz inny.';
+        if (! $availability->isAvailable($service, $employee, $start)) {
+            $problems[] = 'Ten termin jest już niedostępny. Wybierz inny.';
         }
 
-        if (! empty($bledy)) {
-            return back()->withErrors($bledy)->withInput();
+        if (! empty($problems)) {
+            return back()->withErrors($problems)->withInput();
         }
 
         $appointment = Appointment::create([

@@ -33,33 +33,33 @@
 
         <hr class="my-3">
 
-        @php $wieleDni = $dzienOd->toDateString() !== $dzienDo->toDateString(); @endphp
+        @php $multiDay = $dateFrom->toDateString() !== $dateTo->toDateString(); @endphp
         <div>
             <p class="small text-muted mb-2">
                 <i class="bi bi-calendar-check"></i>
-                @if($wieleDni)
+                @if($multiDay)
                     Najbliższe wolne terminy:
                 @else
-                    Wolne terminy na {{ $dzienOd->translatedFormat('l, j F') }}:
+                    Wolne terminy na {{ $dateFrom->translatedFormat('l, j F') }}:
                 @endif
             </p>
 
-            @if(count($service->terminy) > 0)
+            @if(count($service->slots) > 0)
                 <div class="d-flex flex-wrap gap-2">
-                    @foreach($service->terminy as $termin)
+                    @foreach($service->slots as $slot)
                         <a class="btn btn-outline-primary btn-sm"
                            href="{{ route('rezerwacja.create', [
                                 'business'    => $service->business_id,
                                 'service_id'  => $service->id,
-                                'employee_id' => $termin['employee_id'],
-                                'date'        => $termin['time']->toDateString(),
-                                'time'        => $termin['time']->format('H:i'),
+                                'employee_id' => $slot['employee_id'],
+                                'date'        => $slot['time']->toDateString(),
+                                'time'        => $slot['time']->format('H:i'),
                            ]) }}"
-                           title="{{ $termin['employee_name'] }}">
-                            @if($wieleDni)
-                                {{ $termin['time']->translatedFormat('D j.m, H:i') }}
+                           title="{{ $slot['employee_name'] }}">
+                            @if($multiDay)
+                                {{ $slot['time']->translatedFormat('D j.m, H:i') }}
                             @else
-                                {{ $termin['time']->format('H:i') }}
+                                {{ $slot['time']->format('H:i') }}
                             @endif
                         </a>
                     @endforeach

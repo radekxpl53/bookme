@@ -12,16 +12,16 @@ class SearchController extends Controller
 {
     public function index(Request $request, AvailabilityService $availability)
     {
-        $dzienOd = $request->filled('data_od')
+        $dateFrom = $request->filled('data_od')
             ? Carbon::parse($request->input('data_od'))->startOfDay()
             : ($request->filled('data') ? Carbon::parse($request->input('data'))->startOfDay() : Carbon::today());
 
-        $dzienDo = $request->filled('data_do')
+        $dateTo = $request->filled('data_do')
             ? Carbon::parse($request->input('data_do'))->startOfDay()
-            : $dzienOd->copy();
+            : $dateFrom->copy();
 
-        if ($dzienDo->lessThan($dzienOd)) {
-            $dzienDo = $dzienOd->copy();
+        if ($dateTo->lessThan($dateFrom)) {
+            $dateTo = $dateFrom->copy();
         }
 
         $query = Service::query()
@@ -83,8 +83,8 @@ class SearchController extends Controller
                 $m = 3;
                 $c = (float) (BusinessReview::avg('rating') ?? 0);
                 $query->orderByRaw(
-                    '((COALESCE(reviews_count,0) / (COALESCE(reviews_count,0) + ?)) * COALESCE(avg_rating,0)'
-                    .' + (? / (COALESCE(reviews_count,0) + ?)) * ?) DESC',
+                    '((COALESCE(reviews_count,0)::numeric / (COALESCE(reviews_count,0) + ?)) * COALESCE(avg_rating,0)'
+                    .' + (?::numeric / (COALESCE(reviews_count,0) + ?)) * ?) DESC',
                     [$m, $m, $m, $c]
                 );
                 break;
@@ -95,10 +95,10 @@ class SearchController extends Controller
 
         $services = $query->paginate(8)->withQueryString();
 
-        $godzinaOd = $request->input('godzina_od');
-        $godzinaDo = $request->input('godzina_do');
+        $timeFrom = $request->input('godzina_od');
+        $timeTo = $request->input('godzina_do');
         foreach ($services as $service) {
-            $service->terminy = $availability->znajdzTerminyWZakresie($service, $dzienOd, $dzienDo, $godzinaOd, $godzinaDo);
+            $service->slots = $availability->findSlotsInRange($service, $dateFrom, $dateTo, $timeFrom, $timeTo);
         }
 
         $pins = $services->getCollection()
@@ -113,14 +113,14 @@ class SearchController extends Controller
             ])
             ->values();
 
-        $kategorie = ['Fryzjer', 'Barber', 'Kosmetyczka', 'Masaż', 'Paznokcie', 'Brwi i rzęsy'];
+        $categories = ['Fryzjer', 'Barber', 'Kosmetyczka', 'Masaż', 'Paznokcie', 'Brwi i rzęsy'];
 
         return view('search.index', [
             'services' => $services,
             'pins' => $pins,
-            'kategorie' => $kategorie,
-            'dzienOd' => $dzienOd,
-            'dzienDo' => $dzienDo,
+            'categories' => $categories,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
         ]);
     }
 }

@@ -9,13 +9,13 @@ use Carbon\Carbon;
 
 class AvailabilityService
 {
-    const KROK_MINUT = 15;
+    const STEP_MINUTES = 15;
 
-    public function znajdzTerminy(Service $service, Carbon $dzien, ?string $od = null, ?string $do = null, int $limit = 6, ?int $employeeId = null): array
+    public function findSlots(Service $service, Carbon $day, ?string $from = null, ?string $to = null, int $limit = 6, ?int $employeeId = null): array
     {
-        $numerDnia = $dzien->dayOfWeekIso;
+        $isoDay = $day->dayOfWeekIso;
 
-        $terminy = [];
+        $slots = [];
 
         foreach ($service->employees as $employee) {
             if (! $employee->is_active) {
@@ -26,96 +26,95 @@ class AvailabilityService
                 continue;
             }
 
-            $godziny = $employee->workingHours->firstWhere('day_of_week', $numerDnia);
-            if (! $godziny) {
+            $hours = $employee->workingHours->firstWhere('day_of_week', $isoDay);
+            if (! $hours) {
                 continue;
             }
 
-            // Sprawdzamy czy dany dzień wypada w trakcie urlopu pracownika
-            $jestNaUrlopie = $employee->leaves()
-                ->where('start_date', '<=', $dzien->toDateString())
-                ->where('end_date', '>=', $dzien->toDateString())
+            $onLeave = $employee->leaves()
+                ->where('start_date', '<=', $day->toDateString())
+                ->where('end_date', '>=', $day->toDateString())
                 ->exists();
 
-            if ($jestNaUrlopie) {
+            if ($onLeave) {
                 continue;
             }
 
-            $start = $dzien->copy()->setTimeFromTimeString($godziny->start_time);
-            $koniec = $dzien->copy()->setTimeFromTimeString($godziny->end_time);
+            $start = $day->copy()->setTimeFromTimeString($hours->start_time);
+            $end = $day->copy()->setTimeFromTimeString($hours->end_time);
 
-            $zajete = Appointment::where('employee_id', $employee->id)
-                ->whereDate('start_at', $dzien->toDateString())
+            $booked = Appointment::where('employee_id', $employee->id)
+                ->whereDate('start_at', $day->toDateString())
                 ->where('status', '!=', 'cancelled')
                 ->get(['start_at', 'finish_at']);
 
-            $kursor = $start->copy();
+            $cursor = $start->copy();
 
-            while ($kursor->copy()->addMinutes($service->duration_minutes)->lessThanOrEqualTo($koniec)) {
-                $slotStart = $kursor->copy();
-                $slotKoniec = $kursor->copy()->addMinutes($service->duration_minutes);
+            while ($cursor->copy()->addMinutes($service->duration_minutes)->lessThanOrEqualTo($end)) {
+                $slotStart = $cursor->copy();
+                $slotEnd = $cursor->copy()->addMinutes($service->duration_minutes);
 
                 if ($slotStart->isPast()) {
-                    $kursor->addMinutes(self::KROK_MINUT);
+                    $cursor->addMinutes(self::STEP_MINUTES);
                     continue;
                 }
 
-                if ($od && $slotStart->format('H:i') < $od) {
-                    $kursor->addMinutes(self::KROK_MINUT);
+                if ($from && $slotStart->format('H:i') < $from) {
+                    $cursor->addMinutes(self::STEP_MINUTES);
                     continue;
                 }
-                if ($do && $slotStart->format('H:i') >= $do) {
+                if ($to && $slotStart->format('H:i') >= $to) {
                     break;
                 }
 
-                $koliduje = false;
-                foreach ($zajete as $wizyta) {
-                    if ($slotStart->lessThan($wizyta->finish_at) && $slotKoniec->greaterThan($wizyta->start_at)) {
-                        $koliduje = true;
+                $collides = false;
+                foreach ($booked as $appt) {
+                    if ($slotStart->lessThan($appt->finish_at) && $slotEnd->greaterThan($appt->start_at)) {
+                        $collides = true;
                         break;
                     }
                 }
 
-                if (! $koliduje) {
-                    $terminy[] = [
+                if (! $collides) {
+                    $slots[] = [
                         'time' => $slotStart,
                         'employee_id' => $employee->id,
                         'employee_name' => $employee->name,
                     ];
                 }
 
-                $kursor->addMinutes(self::KROK_MINUT);
+                $cursor->addMinutes(self::STEP_MINUTES);
             }
         }
 
-        usort($terminy, fn ($a, $b) => $a['time']->timestamp <=> $b['time']->timestamp);
+        usort($slots, fn ($a, $b) => $a['time']->timestamp <=> $b['time']->timestamp);
 
-        return array_slice($terminy, 0, $limit);
+        return array_slice($slots, 0, $limit);
     }
 
-    public function znajdzTerminyWZakresie(Service $service, Carbon $od, Carbon $doDnia, ?string $godzOd = null, ?string $godzDo = null, int $limit = 6, ?int $employeeId = null): array
+    public function findSlotsInRange(Service $service, Carbon $from, Carbon $toDay, ?string $fromTime = null, ?string $toTime = null, int $limit = 6, ?int $employeeId = null): array
     {
-        $terminy = [];
+        $slots = [];
 
-        $dzien = $od->copy()->startOfDay();
-        $koniec = $doDnia->copy()->startOfDay();
-        if ($koniec->lessThan($dzien)) {
-            $koniec = $dzien->copy();
+        $day = $from->copy()->startOfDay();
+        $end = $toDay->copy()->startOfDay();
+        if ($end->lessThan($day)) {
+            $end = $day->copy();
         }
-        if ($koniec->diffInDays($dzien) > 31) {
-            $koniec = $dzien->copy()->addDays(31);
-        }
-
-        while ($dzien->lessThanOrEqualTo($koniec) && count($terminy) < $limit) {
-            $dzienne = $this->znajdzTerminy($service, $dzien, $godzOd, $godzDo, $limit - count($terminy), $employeeId);
-            $terminy = array_merge($terminy, $dzienne);
-            $dzien->addDay();
+        if ($end->diffInDays($day) > 31) {
+            $end = $day->copy()->addDays(31);
         }
 
-        return $terminy;
+        while ($day->lessThanOrEqualTo($end) && count($slots) < $limit) {
+            $daySlots = $this->findSlots($service, $day, $fromTime, $toTime, $limit - count($slots), $employeeId);
+            $slots = array_merge($slots, $daySlots);
+            $day->addDay();
+        }
+
+        return $slots;
     }
 
-    public function czyWolny(Service $service, Employee $employee, Carbon $start): bool
+    public function isAvailable(Service $service, Employee $employee, Carbon $start): bool
     {
         if (! $employee->is_active || $start->isPast()) {
             return false;
@@ -123,32 +122,32 @@ class AvailabilityService
 
         $finish = $start->copy()->addMinutes($service->duration_minutes);
 
-        $godziny = $employee->workingHours->firstWhere('day_of_week', $start->dayOfWeekIso);
-        if (! $godziny) {
+        $hours = $employee->workingHours->firstWhere('day_of_week', $start->dayOfWeekIso);
+        if (! $hours) {
             return false;
         }
 
-        $jestNaUrlopie = $employee->leaves()
+        $onLeave = $employee->leaves()
             ->where('start_date', '<=', $start->toDateString())
             ->where('end_date', '>=', $start->toDateString())
             ->exists();
 
-        if ($jestNaUrlopie) {
+        if ($onLeave) {
             return false;
         }
 
-        $startPracy = $start->copy()->setTimeFromTimeString($godziny->start_time);
-        $koniecPracy = $start->copy()->setTimeFromTimeString($godziny->end_time);
-        if ($start->lessThan($startPracy) || $finish->greaterThan($koniecPracy)) {
+        $workStart = $start->copy()->setTimeFromTimeString($hours->start_time);
+        $workEnd = $start->copy()->setTimeFromTimeString($hours->end_time);
+        if ($start->lessThan($workStart) || $finish->greaterThan($workEnd)) {
             return false;
         }
 
-        $koliduje = Appointment::where('employee_id', $employee->id)
+        $collides = Appointment::where('employee_id', $employee->id)
             ->where('status', '!=', 'cancelled')
             ->where('start_at', '<', $finish)
             ->where('finish_at', '>', $start)
             ->exists();
 
-        return ! $koliduje;
+        return ! $collides;
     }
 }

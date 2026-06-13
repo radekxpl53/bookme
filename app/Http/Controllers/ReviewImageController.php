@@ -14,17 +14,17 @@ class ReviewImageController extends Controller
 {
     public function storeBusiness(Request $request, Business $business)
     {
-        $maOpinie = BusinessReview::where('business_id', $business->id)
+        $hasReview = BusinessReview::where('business_id', $business->id)
             ->where('user_id', Auth::id())
             ->exists();
 
-        if (! $maOpinie) {
+        if (! $hasReview) {
             abort(403);
         }
 
         $request->validate(['photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120']);
 
-        $image = $this->zapiszPlik($request->file('photo'));
+        $image = $this->storeImage($request->file('photo'));
         $business->reviewImages()->attach($image->id, ['user_id' => Auth::id()]);
 
         return back()->with('success', 'Zdjęcie zostało dodane do opinii.');
@@ -36,23 +36,23 @@ class ReviewImageController extends Controller
             abort(403);
         }
 
-        $maOpinie = EmployeeReview::where('employee_id', $appointment->employee_id)
+        $hasReview = EmployeeReview::where('employee_id', $appointment->employee_id)
             ->where('user_id', Auth::id())
             ->exists();
 
-        if (! $maOpinie) {
+        if (! $hasReview) {
             abort(403);
         }
 
         $request->validate(['photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120']);
 
-        $image = $this->zapiszPlik($request->file('photo'));
+        $image = $this->storeImage($request->file('photo'));
         $appointment->employee->reviewImages()->attach($image->id, ['user_id' => Auth::id()]);
 
         return back()->with('success', 'Zdjęcie zostało dodane do opinii.');
     }
 
-    private function zapiszPlik($file): Image
+    private function storeImage($file): Image
     {
         $path = $file->store('review_images', 'public');
 

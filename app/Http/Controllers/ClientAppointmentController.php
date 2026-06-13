@@ -14,18 +14,18 @@ class ClientAppointmentController extends Controller
             ->orderByDesc('start_at')
             ->get();
 
-        $nadchodzace = $appointments
+        $upcoming = $appointments
             ->filter(fn ($a) => $a->start_at->isFuture() && in_array($a->status, ['pending', 'confirmed']))
             ->sortBy('start_at')
             ->values();
 
-        $historia = $appointments
+        $history = $appointments
             ->reject(fn ($a) => $a->start_at->isFuture() && in_array($a->status, ['pending', 'confirmed']))
             ->values();
 
-        $ocenieniPracownicy = Auth::user()->employeeReviews->pluck('employee_id');
+        $reviewedEmployees = Auth::user()->employeeReviews->pluck('employee_id');
 
-        return view('client.appointments', compact('nadchodzace', 'historia', 'ocenieniPracownicy'));
+        return view('client.appointments', compact('upcoming', 'history', 'reviewedEmployees'));
     }
 
     public function cancel(Appointment $appointment)

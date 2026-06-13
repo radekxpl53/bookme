@@ -23,7 +23,7 @@ class BusinessPublicController extends Controller
         $averageRating = $business->reviews->avg('rating');
         $reviewsCount  = $business->reviews->count();
 
-        $mojaOpinia = Auth::check()
+        $myReview = Auth::check()
             ? BusinessReview::where('business_id', $business->id)->where('user_id', Auth::id())->first()
             : null;
 
@@ -31,7 +31,7 @@ class BusinessPublicController extends Controller
             'business',
             'averageRating',
             'reviewsCount',
-            'mojaOpinia'
+            'myReview'
         ));
     }
 }
