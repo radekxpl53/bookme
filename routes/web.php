@@ -10,7 +10,6 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientAppointmentController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\LokalOpiniaController;
 use App\Http\Controllers\ReviewImageController;
 use App\Http\Controllers\ProfileController;
 
@@ -43,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/moje-wizyty/{appointment}/opinia', [ReviewController::class, 'store'])->name('klient.opinia.store');
     Route::post('/moje-wizyty/{appointment}/opinia/zdjecie', [ReviewImageController::class, 'storeEmployee'])->name('klient.opinia.zdjecie');
 
-    Route::post('/lokal/{business}/opinia', [LokalOpiniaController::class, 'store'])->name('lokal.opinia.store');
+    Route::post('/lokal/{business}/opinia', [ReviewController::class, 'storeBusinessReview'])->name('lokal.opinia.store');
     Route::post('/lokal/{business}/opinia/zdjecie', [ReviewImageController::class, 'storeBusiness'])->name('lokal.opinia.zdjecie');
 });
 

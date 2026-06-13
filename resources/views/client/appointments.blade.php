@@ -4,7 +4,7 @@
 
 @section('content')
 @php
-    $statusy = [
+    $statuses = [
         'pending'   => ['label' => 'Oczekuje',     'class' => 'bg-warning text-dark'],
         'confirmed' => ['label' => 'Potwierdzona',  'class' => 'bg-success'],
         'completed' => ['label' => 'Zakończona',    'class' => 'bg-secondary'],
@@ -29,29 +29,29 @@
             @endif
 
             <h2 class="h6 text-muted mb-3">Nadchodzące</h2>
-            @forelse($nadchodzace as $wizyta)
+            @forelse($upcoming as $appt)
                 <div class="card shadow-sm mb-3">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h5 class="mb-1">{{ $wizyta->service->name }}</h5>
+                                <h5 class="mb-1">{{ $appt->service->name }}</h5>
                                 <p class="mb-1">
-                                    <a href="{{ route('lokal.show', $wizyta->service->business) }}" class="text-decoration-none fw-semibold">
-                                        {{ $wizyta->service->business->name }}
+                                    <a href="{{ route('lokal.show', $appt->service->business) }}" class="text-decoration-none fw-semibold">
+                                        {{ $appt->service->business->name }}
                                     </a>
-                                    <span class="text-muted small">• {{ $wizyta->employee->name }}</span>
+                                    <span class="text-muted small">• {{ $appt->employee->name }}</span>
                                 </p>
                                 <p class="text-muted small mb-0">
                                     <i class="bi bi-calendar-event"></i>
-                                    {{ $wizyta->start_at->translatedFormat('l, j F Y, H:i') }}
+                                    {{ $appt->start_at->translatedFormat('l, j F Y, H:i') }}
                                 </p>
                             </div>
                             <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                <span class="badge {{ $statusy[$wizyta->status]['class'] ?? 'bg-secondary' }} mb-2">
-                                    {{ $statusy[$wizyta->status]['label'] ?? $wizyta->status }}
+                                <span class="badge {{ $statuses[$appt->status]['class'] ?? 'bg-secondary' }} mb-2">
+                                    {{ $statuses[$appt->status]['label'] ?? $appt->status }}
                                 </span>
-                                <div class="fw-bold mb-2">{{ number_format($wizyta->total_price, 2) }} zł</div>
-                                <form action="{{ route('klient.wizyty.anuluj', $wizyta) }}" method="POST"
+                                <div class="fw-bold mb-2">{{ number_format($appt->total_price, 2) }} zł</div>
+                                <form action="{{ route('klient.wizyty.anuluj', $appt) }}" method="POST"
                                       onsubmit="return confirm('Na pewno anulować tę wizytę?');">
                                     @csrf
                                     @method('PATCH')
@@ -74,27 +74,27 @@
             @endforelse
 
             <h2 class="h6 text-muted mb-3 mt-4">Historia</h2>
-            @forelse($historia as $wizyta)
+            @forelse($history as $appt)
                 <div class="card shadow-sm mb-2">
                     <div class="card-body py-3">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h6 class="mb-1">{{ $wizyta->service->name }}</h6>
+                                <h6 class="mb-1">{{ $appt->service->name }}</h6>
                                 <p class="text-muted small mb-0">
-                                    {{ $wizyta->service->business->name }} • {{ $wizyta->employee->name }} •
-                                    {{ $wizyta->start_at->translatedFormat('j F Y, H:i') }}
+                                    {{ $appt->service->business->name }} • {{ $appt->employee->name }} •
+                                    {{ $appt->start_at->translatedFormat('j F Y, H:i') }}
                                 </p>
                             </div>
                             <div class="col-md-4 text-md-end mt-2 mt-md-0">
-                                <span class="badge {{ $statusy[$wizyta->status]['class'] ?? 'bg-secondary' }}">
-                                    {{ $statusy[$wizyta->status]['label'] ?? $wizyta->status }}
+                                <span class="badge {{ $statuses[$appt->status]['class'] ?? 'bg-secondary' }}">
+                                    {{ $statuses[$appt->status]['label'] ?? $appt->status }}
                                 </span>
 
-                                @if($wizyta->status === 'completed')
+                                @if($appt->status === 'completed')
                                     <div class="mt-2">
-                                        <a href="{{ route('klient.opinia.create', $wizyta) }}" class="btn btn-outline-primary btn-sm">
+                                        <a href="{{ route('klient.opinia.create', $appt) }}" class="btn btn-outline-primary btn-sm">
                                             <i class="bi bi-star"></i>
-                                            {{ $ocenieniPracownicy->contains($wizyta->employee_id) ? 'Edytuj opinię' : 'Oceń specjalistę' }}
+                                            {{ $reviewedEmployees->contains($appt->employee_id) ? 'Edytuj opinię' : 'Oceń specjalistę' }}
                                         </a>
                                     </div>
                                 @endif

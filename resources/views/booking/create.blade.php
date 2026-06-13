@@ -72,7 +72,7 @@
                             <div class="col-auto">
                                 <label class="form-label mb-0">Dzień</label>
                                 <input type="date" name="date" class="form-control form-control-sm"
-                                       value="{{ $dzien->toDateString() }}" min="{{ now()->toDateString() }}">
+                                       value="{{ $day->toDateString() }}" min="{{ now()->toDateString() }}">
                             </div>
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-primary btn-sm">Pokaż dostępność</button>
@@ -80,10 +80,10 @@
                         </form>
 
                         <p class="small text-muted mb-3">
-                            Dostępność na {{ $dzien->translatedFormat('l, j F') }}:
+                            Dostępność na {{ $day->translatedFormat('l, j F') }}:
                         </p>
 
-                        @forelse($pracownicy as $e)
+                        @forelse($specialists as $e)
                             <div class="border-bottom pb-3 mb-3">
                                 <div class="d-flex align-items-center mb-2">
                                     <i class="bi bi-person-circle fs-4 text-secondary me-2"></i>
@@ -93,18 +93,18 @@
                                     </div>
                                 </div>
 
-                                @if(count($e->terminy) > 0)
+                                @if(count($e->slots) > 0)
                                     <div class="d-flex flex-wrap gap-2">
-                                        @foreach($e->terminy as $termin)
+                                        @foreach($e->slots as $slot)
                                             <a class="btn btn-outline-primary btn-sm"
                                                href="{{ route('rezerwacja.create', [
                                                     'business' => $business,
                                                     'service_id' => $service->id,
                                                     'employee_id' => $e->id,
-                                                    'date' => $termin['time']->toDateString(),
-                                                    'time' => $termin['time']->format('H:i'),
+                                                    'date' => $slot['time']->toDateString(),
+                                                    'time' => $slot['time']->format('H:i'),
                                                ]) }}">
-                                                {{ $termin['time']->format('H:i') }}
+                                                {{ $slot['time']->format('H:i') }}
                                             </a>
                                         @endforeach
                                     </div>
@@ -135,7 +135,7 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span class="text-muted">Termin</span>
-                                <strong>{{ \Carbon\Carbon::parse($dzien->toDateString().' '.$time)->translatedFormat('l, j F Y, H:i') }}</strong>
+                                <strong>{{ \Carbon\Carbon::parse($day->toDateString().' '.$time)->translatedFormat('l, j F Y, H:i') }}</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span class="text-muted">Czas trwania</span><strong>{{ $service->duration_minutes }} min</strong>
@@ -146,14 +146,14 @@
                         </ul>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('rezerwacja.create', ['business' => $business, 'service_id' => $service->id, 'date' => $dzien->toDateString()]) }}"
+                            <a href="{{ route('rezerwacja.create', ['business' => $business, 'service_id' => $service->id, 'date' => $day->toDateString()]) }}"
                                class="btn btn-secondary">Zmień termin</a>
 
                             <form action="{{ route('rezerwacja.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="service_id" value="{{ $service->id }}">
                                 <input type="hidden" name="employee_id" value="{{ $employee->id }}">
-                                <input type="hidden" name="date" value="{{ $dzien->toDateString() }}">
+                                <input type="hidden" name="date" value="{{ $day->toDateString() }}">
                                 <input type="hidden" name="time" value="{{ $time }}">
                                 <button type="submit" class="btn btn-success">
                                     <i class="bi bi-check-circle"></i> Potwierdź rezerwację

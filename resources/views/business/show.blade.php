@@ -127,9 +127,9 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     @auth
-                        <h6 class="mb-3">{{ $mojaOpinia ? 'Twoja opinia o lokalu' : 'Dodaj opinię o lokalu' }}</h6>
+                        <h6 class="mb-3">{{ $myReview ? 'Twoja opinia o lokalu' : 'Dodaj opinię o lokalu' }}</h6>
 
-                        @if($mojaOpinia)
+                        @if($myReview)
                             <div class="alert alert-info py-2 small">
                                 <i class="bi bi-pencil"></i> Już oceniłeś ten lokal — możesz zaktualizować ocenę.
                             </div>
@@ -138,23 +138,23 @@
                         <form action="{{ route('lokal.opinia.store', $business) }}" method="POST">
                             @csrf
                             <div class="mb-2">
-                                @include('partials.star-input', ['name' => 'rating', 'value' => $mojaOpinia->rating ?? ''])
+                                @include('partials.star-input', ['name' => 'rating', 'value' => $myReview->rating ?? ''])
                             </div>
                             <textarea name="comment" rows="2" class="form-control mb-2"
-                                      placeholder="Komentarz (opcjonalnie)">{{ old('comment', $mojaOpinia->comment ?? '') }}</textarea>
+                                      placeholder="Komentarz (opcjonalnie)">{{ old('comment', $myReview->comment ?? '') }}</textarea>
                             <button type="submit" class="btn btn-success btn-sm">
                                 <i class="bi bi-send"></i> Zapisz opinię
                             </button>
                         </form>
 
-                        @if($mojaOpinia)
+                        @if($myReview)
                             <hr>
                             @php
-                                $mojeZdjecia = $business->reviewImages->filter(fn ($img) => $img->pivot->user_id == auth()->id());
+                                $myPhotos = $business->reviewImages->filter(fn ($img) => $img->pivot->user_id == auth()->id());
                             @endphp
-                            @if($mojeZdjecia->count())
+                            @if($myPhotos->count())
                                 <div class="d-flex flex-wrap gap-2 mb-2">
-                                    @foreach($mojeZdjecia as $img)
+                                    @foreach($myPhotos as $img)
                                         <img src="{{ \Illuminate\Support\Facades\Storage::url($img->file_name) }}"
                                              alt="zdjęcie opinii" class="rounded border" role="button"
                                              data-bs-toggle="modal" data-bs-target="#imageModal"

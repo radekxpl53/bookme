@@ -31,8 +31,8 @@
                             <label class="form-label">Kategoria</label>
                             <select name="kategoria" class="form-select form-select-sm">
                                 <option value="">Wszystkie</option>
-                                @foreach($kategorie as $kat)
-                                    <option value="{{ $kat }}" {{ request('kategoria') === $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat }}" {{ request('kategoria') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -42,12 +42,12 @@
                             <div class="input-group input-group-sm mb-2">
                                 <span class="input-group-text">Od</span>
                                 <input type="date" name="data_od" class="form-control"
-                                       value="{{ $dzienOd->toDateString() }}" min="{{ now()->toDateString() }}">
+                                       value="{{ $dateFrom->toDateString() }}" min="{{ now()->toDateString() }}">
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Do</span>
                                 <input type="date" name="data_do" class="form-control"
-                                       value="{{ $dzienDo->toDateString() }}" min="{{ now()->toDateString() }}">
+                                       value="{{ $dateTo->toDateString() }}" min="{{ now()->toDateString() }}">
                             </div>
                         </div>
 
