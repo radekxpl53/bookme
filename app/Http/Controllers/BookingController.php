@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Business;
+use App\Models\BusinessBlacklist;
 use App\Models\Employee;
 use App\Models\Service;
 use App\Services\AvailabilityService;
@@ -21,6 +22,8 @@ class BookingController extends Controller
             'employees.services',
             'employees.workingHours',
         ]);
+
+        $blacklisted = $this->isBlacklisted($business->id);
 
         $service = $request->filled('service_id')
             ? $business->services->firstWhere('id', (int) $request->input('service_id'))
@@ -56,7 +59,7 @@ class BookingController extends Controller
         }
 
         return view('booking.create', compact(
-            'business', 'service', 'specialists', 'employee', 'day', 'time', 'step'
+            'business', 'service', 'specialists', 'employee', 'day', 'time', 'step', 'blacklisted'
         ));
     }
 
@@ -75,6 +78,9 @@ class BookingController extends Controller
         $start = Carbon::parse($validated['date'].' '.$validated['time']);
 
         $problems = [];
+        if ($this->isBlacklisted($service->business_id)) {
+            $problems[] = 'Nie możesz rezerwować wizyt w tym lokalu.';
+        }
         if ($employee->business_id !== $service->business_id) {
             $problems[] = 'Wybrany pracownik nie należy do tego lokalu.';
         }
@@ -112,4 +118,12 @@ class BookingController extends Controller
 
         return view('booking.success', compact('appointment'));
     }
+
+    private function isBlacklisted(int $businessId): bool
+    {
+        return BusinessBlacklist::where('business_id', $businessId)
+            ->where('user_id', Auth::id())
+            ->exists();
+    }
 }
+
