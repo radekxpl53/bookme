@@ -37,6 +37,12 @@
                 </div>
             @endif
 
+            @if($blacklisted)
+                <div class="alert alert-danger">
+                    <i class="bi bi-slash-circle"></i> Nie możesz rezerwować wizyt w tym lokalu.
+                </div>
+            @else
+
             @if($step === 1)
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white"><h6 class="mb-0">Wybierz usługę</h6></div>
@@ -162,6 +168,8 @@
                         </div>
                     </div>
                 </div>
+            @endif
+
             @endif
 
         </div>
