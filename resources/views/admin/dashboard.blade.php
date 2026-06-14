@@ -16,7 +16,7 @@
 
     <h5 class="fw-bold mb-4 text-muted border-bottom pb-2">Kluczowe wskaźniki (Platforma)</h5>
     <div class="row g-4 mb-5">
-        <!-- Rezerwacje -->
+
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden">
                 <div class="position-absolute top-0 end-0 p-3 opacity-25">
@@ -35,24 +35,29 @@
             </div>
         </div>
 
-        <!-- Użytkownicy -->
+
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden">
                 <div class="position-absolute top-0 end-0 p-3 opacity-25">
                     <i class="bi bi-people display-1 text-success"></i>
                 </div>
-                <div class="card-body position-relative z-1">
+                <div class="card-body position-relative z-1 d-flex flex-column">
                     <h6 class="text-uppercase text-muted fw-bold mb-1">Zarejestrowani Użytkownicy</h6>
                     <h2 class="display-5 fw-bold mb-3">{{ $totalUsers }}</h2>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 mb-3">
                         <span class="badge bg-light text-dark border"><i class="bi bi-person me-1"></i>Klienci: {{ $totalUsers - $totalOwners }}</span>
                         <span class="badge bg-light text-dark border"><i class="bi bi-briefcase me-1"></i>Biznesy: {{ $totalOwners }}</span>
+                    </div>
+                    <div class="mt-auto">
+                        <a href="{{ route('admin.users') }}" class="btn btn-sm btn-outline-success w-100 fw-bold">
+                            Zarządzaj użytkownikami <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Opinie -->
+
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100 position-relative overflow-hidden">
                 <div class="position-absolute top-0 end-0 p-3 opacity-25">

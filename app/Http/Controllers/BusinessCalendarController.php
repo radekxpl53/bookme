@@ -42,8 +42,12 @@ class BusinessCalendarController extends Controller
 
         $events = $appointments->map(function ($apt) {
             $color = $this->getColorForEmployee($apt->employee_id);
+            $textColor = '#ffffff';
             if ($apt->status === 'cancelled') {
-                $color = '#6c757d'; // grey out cancelled
+                $color = '#6c757d';
+            } elseif ($apt->status === 'pending') {
+                $color = '#ffc107';
+                $textColor = '#000000';
             }
 
             return [
@@ -53,6 +57,7 @@ class BusinessCalendarController extends Controller
                 'end' => $apt->finish_at->format('Y-m-d\TH:i:s'),
                 'backgroundColor' => $color,
                 'borderColor' => $color,
+                'textColor' => $textColor,
                 'extendedProps' => [
                     'client_name' => $apt->client->first_name . ' ' . $apt->client->surname,
                     'client_phone' => $apt->client->phone ?? 'Brak numeru',
@@ -87,14 +92,14 @@ class BusinessCalendarController extends Controller
     private function getColorForEmployee($employeeId)
     {
         $colors = [
-            '#0d6efd', // blue
-            '#198754', // green
-            '#dc3545', // red
-            '#fd7e14', // orange
-            '#6f42c1', // purple
-            '#d63384', // pink
-            '#20c997', // teal
-            '#0dcaf0', // cyan
+            '#0d6efd',
+            '#198754',
+            '#dc3545',
+            '#fd7e14',
+            '#6f42c1',
+            '#d63384',
+            '#20c997',
+            '#0dcaf0',
         ];
         return $colors[$employeeId % count($colors)];
     }

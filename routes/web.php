@@ -12,13 +12,21 @@ use App\Http\Controllers\ClientAppointmentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewImageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\BlacklistController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BusinessPhotoController;
+use App\Http\Controllers\EmployeePortfolioController;
 
-// DO USUNIĘCIA POTEM, JAK ZADZIAŁA ZWYKLE LOGOWANIE
+
 Route::get('/dev-login', function () {
     $owner = User::where('email', 'wlasciciel@bookme.test')->first();
     Auth::login($owner);
     return redirect()->route('biznes.lokale.index');
 });
+
+Route::middleware(['not_admin'])->group(function () {
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -51,13 +59,7 @@ Route::middleware(['auth'])->prefix('biznes')->name('biznes.')->group(function (
     Route::post('lokale', [BusinessController::class, 'store'])->name('lokale.store');
 });
 
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\BlacklistController;
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\BusinessPhotoController;
-use App\Http\Controllers\EmployeePortfolioController;
 
 Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(function () {
     Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
@@ -75,7 +77,7 @@ Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(f
     Route::get('lokale/{business}/opinie', [\App\Http\Controllers\BusinessReviewController::class, 'index'])->name('lokale.opinie.index');
 });
 
-
+});
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -83,6 +85,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/biznesy/{business}/approve', [AdminController::class, 'approveBusiness'])->name('businesses.approve');
     Route::post('/biznesy/{business}/reject', [AdminController::class, 'rejectBusiness'])->name('businesses.reject');
     Route::get('/uzytkownicy', [AdminController::class, 'users'])->name('users');
+    Route::get('/uzytkownicy/{user}/edit', [AdminController::class, 'editUser'])->name('users.edit');
+    Route::put('/uzytkownicy/{user}', [AdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/uzytkownicy/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
 });
 
 require __DIR__.'/auth.php';

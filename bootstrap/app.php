@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
             'owner' => \App\Http\Middleware\IsOwner::class,
+            'not_admin' => \App\Http\Middleware\RedirectIfAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

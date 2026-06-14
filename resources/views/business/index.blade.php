@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <!-- Wyszukiwarka -->
+
     <div class="card shadow-sm mb-5 border-0">
         <div class="card-body bg-light rounded">
             <form action="{{ route('biznes.lokale.index') }}" method="GET" class="row g-3">
@@ -44,95 +44,91 @@
         </div>
     </div>
 
-    <!-- Lista biznesów - KAFELKI -->
+
     <div class="row g-4">
         @forelse($businesses as $business)
             <div class="col-md-6 col-lg-4">
-                <div class="card h-100 shadow border-0 hover-shadow transition-all">
-                    <!-- Obrazek tła lub placeholder -->
-                    <div class="card-img-top bg-dark text-white d-flex flex-column justify-content-end p-3 position-relative" style="height: 160px; background: linear-gradient(135deg, #2b2b2b, #4b4b4b);">
-                        @if(!$business->is_approved)
-                            <div class="position-absolute top-0 end-0 m-3">
-                                <span class="badge bg-warning text-dark shadow-sm"><i class="bi bi-hourglass-split"></i> Oczekuje na akceptację</span>
+                <div class="card h-100 shadow-sm custom-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title fw-bold mb-2 text-dark text-truncate" style="max-width: 200px;" title="{{ $business->name }}">{{ $business->name }}</h5>
+                                <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill border border-primary-subtle">{{ $business->category }}</span>
+                                @if(!$business->is_approved)
+                                    <span class="badge bg-warning text-dark px-2 py-1 rounded-pill"><i class="bi bi-hourglass-split"></i> Oczekuje</span>
+                                @endif
                             </div>
-                        @endif
-                        <h4 class="card-title fw-bold mb-1 text-truncate">{{ $business->name }}</h4>
-                        <p class="card-text small mb-0"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ Str::limit($business->address, 40) }}</p>
-                        <span class="badge bg-light text-dark position-absolute top-0 start-0 m-3 shadow-sm">{{ $business->category }}</span>
-                    </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light btn-sm rounded-circle shadow-none text-muted d-flex align-items-center justify-content-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 32px; height: 32px; padding: 0;">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('biznes.lokale.edit', $business->id) }}">
+                                            <i class="bi bi-pencil-square me-2 text-secondary"></i> Edytuj profil
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('biznes.lokale.blacklist.index', $business->id) }}">
+                                            <i class="bi bi-person-x me-2 text-dark"></i> Czarna lista
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon? Wszystkie dane zostaną wykasowane!');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bi bi-trash me-2"></i> Usuń lokal
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <p class="text-muted small mb-4"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ Str::limit($business->address, 45) }}</p>
 
-                    <div class="card-body bg-white pt-4">
-                        <!-- Główne Akcje (Duże Przyciski) -->
-                        <div class="d-grid gap-2 mb-4">
-                            <a href="{{ route('biznes.lokale.kalendarz.index', $business->id) }}" class="btn btn-primary fw-bold text-start shadow-sm">
-                                <i class="bi bi-calendar-week me-2"></i> Kalendarz Wizyt
+
+                        <div class="d-grid mb-4">
+                            <a href="{{ route('biznes.lokale.kalendarz.index', $business->id) }}" class="btn btn-primary rounded-3 fw-medium py-2 shadow-sm d-flex align-items-center justify-content-center">
+                                <i class="bi bi-calendar-check me-2 fs-5"></i> Kalendarz Wizyt
                             </a>
                         </div>
                         
-                        <!-- Akcje Zarządzania -->
-                        <div class="row g-2 mb-4">
+
+                        <div class="row g-2">
                             <div class="col-6">
-                                <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-outline-dark w-100 text-start text-truncate">
-                                    <i class="bi bi-scissors text-info me-1"></i> Usługi
+                                <a href="{{ route('biznes.lokale.uslugi.index', $business->id) }}" class="btn btn-light w-100 text-center rounded-3 text-secondary custom-btn-hover py-2">
+                                    <i class="bi bi-scissors me-2 text-info"></i> Usługi
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-outline-dark w-100 text-start text-truncate">
-                                    <i class="bi bi-people text-success me-1"></i> Zespół
+                                <a href="{{ route('biznes.lokale.pracownicy.index', $business->id) }}" class="btn btn-light w-100 text-center rounded-3 text-secondary custom-btn-hover py-2">
+                                    <i class="bi bi-people me-2 text-success"></i> Zespół
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="{{ route('biznes.lokale.opinie.index', $business->id) }}" class="btn btn-outline-dark w-100 text-start text-truncate">
-                                    <i class="bi bi-star-fill text-warning me-1"></i> Opinie
+                                <a href="{{ route('biznes.lokale.opinie.index', $business->id) }}" class="btn btn-light w-100 text-center rounded-3 text-secondary custom-btn-hover py-2">
+                                    <i class="bi bi-star-fill me-2 text-warning"></i> Opinie
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="{{ route('biznes.lokale.zdjecia.index', $business->id) }}" class="btn btn-outline-dark w-100 text-start text-truncate">
-                                    <i class="bi bi-images text-primary me-1"></i> Zdjęcia
+                                <a href="{{ route('biznes.lokale.zdjecia.index', $business->id) }}" class="btn btn-light w-100 text-center rounded-3 text-secondary custom-btn-hover py-2">
+                                    <i class="bi bi-images me-2 text-primary"></i> Zdjęcia
                                 </a>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Opcje Dodatkowe w stopce karty -->
-                    <div class="card-footer bg-light border-0 d-flex justify-content-between align-items-center p-3">
-                        <div class="dropup w-100">
-                            <button class="btn btn-secondary btn-sm w-100 dropdown-toggle text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span><i class="bi bi-gear-fill me-1"></i> Ustawienia</span>
-                            </button>
-                            <ul class="dropdown-menu w-100 shadow border-0">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('biznes.lokale.edit', $business->id) }}">
-                                        <i class="bi bi-pencil-square me-2 text-secondary"></i> Edytuj profil
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('biznes.lokale.blacklist.index', $business->id) }}">
-                                        <i class="bi bi-person-x me-2 text-dark"></i> Czarna lista
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{{ route('biznes.lokale.destroy', $business->id) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć ten salon? Wszystkie dane zostaną wykasowane!');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bi bi-trash me-2"></i> Usuń lokal
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-light text-center p-5 shadow-sm border-0">
+                <div class="alert alert-light text-center p-5 shadow-sm border-0 rounded-4">
                     <i class="bi bi-shop display-1 text-muted mb-3 d-block"></i>
                     <h4 class="text-muted">Nie masz jeszcze żadnych dodanych lokali.</h4>
                     <p class="text-muted">Rozpocznij swoją działalność dodając pierwszy salon.</p>
-                    <a href="{{ route('biznes.lokale.create') }}" class="btn btn-primary mt-3">
+                    <a href="{{ route('biznes.lokale.create') }}" class="btn btn-primary mt-3 px-4 rounded-pill">
                         Dodaj swój pierwszy biznes
                     </a>
                 </div>
@@ -142,12 +138,30 @@
 </div>
 
 <style>
-    .hover-shadow:hover {
-        box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.15)!important;
-        transform: translateY(-3px);
+    .custom-card {
+        border-radius: 1.25rem;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
     }
-    .transition-all {
-        transition: all 0.3s ease-in-out;
+    .custom-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    .custom-btn-hover {
+        transition: all 0.2s ease-in-out;
+        border: 1px solid #e2e8f0;
+        background-color: #f8f9fa;
+        font-size: 0.9rem;
+    }
+    .custom-btn-hover:hover {
+        background-color: #e9ecef;
+        border-color: #cbd5e1;
+        color: #212529 !important;
+    }
+    .custom-btn-hover i {
+        font-size: 1.1rem;
+        vertical-align: middle;
     }
 </style>
 @endsection

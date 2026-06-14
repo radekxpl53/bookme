@@ -25,11 +25,7 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success shadow-sm border-0">
-            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
-        </div>
-    @endif
+
 
     <div class="card shadow border-0 rounded-4 overflow-hidden">
         <div class="card-body p-4 bg-white">
@@ -38,7 +34,7 @@
     </div>
 </div>
 
-<!-- Modal Szczegółów Wizyty -->
+
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -77,7 +73,7 @@
   </div>
 </div>
 
-<!-- FullCalendar JS & CSS -->
+
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales-all.global.min.js'></script>
 

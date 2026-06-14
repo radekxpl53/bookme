@@ -24,13 +24,13 @@ class BusinessReviewController extends Controller
     {
         $this->authorizeOwner($business);
 
-        // Pobieramy opinie o biznesie wraz z autorem
+
         $businessReviews = BusinessReview::with('user')
             ->where('business_id', $business->id)
             ->latest('created_at')
             ->get();
 
-        // Pobieramy opinie o pracownikach z tego biznesu
+
         $employeeReviews = EmployeeReview::with(['user', 'employee'])
             ->whereHas('employee', function ($q) use ($business) {
                 $q->where('business_id', $business->id);
@@ -38,7 +38,7 @@ class BusinessReviewController extends Controller
             ->latest('created_at')
             ->get();
 
-        // Wyliczamy proste statystyki
+
         $avgBusinessRating = $businessReviews->avg('rating');
         $avgEmployeeRating = $employeeReviews->avg('rating');
 

@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <!-- Zakładki -->
+
     <ul class="nav nav-tabs mb-4" id="reviewsTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active fw-bold px-4" id="business-tab" data-bs-toggle="tab" data-bs-target="#business" type="button" role="tab" aria-controls="business" aria-selected="true">
@@ -35,7 +35,7 @@
     </ul>
 
     <div class="tab-content" id="reviewsTabsContent">
-        <!-- ZAKŁADKA 1: Opinie o salonie -->
+
         <div class="tab-pane fade show active" id="business" role="tabpanel" aria-labelledby="business-tab">
             <div class="row g-4">
                 @forelse($businessReviews as $review)
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <!-- ZAKŁADKA 2: Opinie o pracownikach -->
+
         <div class="tab-pane fade" id="employee" role="tabpanel" aria-labelledby="employee-tab">
             <div class="row g-4">
                 @forelse($employeeReviews as $review)

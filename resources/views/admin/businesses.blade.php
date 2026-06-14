@@ -11,24 +11,40 @@
         </a>
     </div>
 
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <a class="nav-link {{ $status === 'pending' ? 'active' : '' }}" href="{{ route('admin.businesses', ['status' => 'pending']) }}">
-                Oczekujące na weryfikację
-                @if($status === 'pending') <span class="badge bg-warning text-dark ms-1">{{ $businesses->count() }}</span> @endif
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $status === 'approved' ? 'active' : '' }}" href="{{ route('admin.businesses', ['status' => 'approved']) }}">
-                Zatwierdzone
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $status === 'all' ? 'active' : '' }}" href="{{ route('admin.businesses', ['status' => 'all']) }}">
-                Wszystkie
-            </a>
-        </li>
-    </ul>
+    <div class="row align-items-center mb-4 border-bottom pb-2 pb-md-0">
+        <div class="col-md-7">
+            <ul class="nav nav-tabs border-bottom-0 mb-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ $status === 'pending' ? 'active' : '' }}" href="{{ route('admin.businesses', ['status' => 'pending', 'search' => request('search')]) }}">
+                        Oczekujące na weryfikację
+                        @if($status === 'pending') <span class="badge bg-warning text-dark ms-1">{{ $businesses->count() }}</span> @endif
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ $status === 'approved' ? 'active' : '' }}" href="{{ route('admin.businesses', ['status' => 'approved', 'search' => request('search')]) }}">
+                        Zatwierdzone
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ $status === 'all' ? 'active' : '' }}" href="{{ route('admin.businesses', ['status' => 'all', 'search' => request('search')]) }}">
+                        Wszystkie
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-5 mt-3 mt-md-0">
+            <form action="{{ route('admin.businesses') }}" method="GET" class="d-flex">
+                <input type="hidden" name="status" value="{{ $status }}">
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-sm" name="search" value="{{ $search ?? '' }}" placeholder="Szukaj nazwy, miasta, adresu..." aria-label="Szukaj">
+                    <button class="btn btn-outline-primary btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                    @if(request('search'))
+                        <a href="{{ route('admin.businesses', ['status' => $status]) }}" class="btn btn-outline-danger btn-sm" title="Wyczyść wyszukiwanie"><i class="bi bi-x-lg"></i></a>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="card shadow-sm">
         <div class="card-body p-0">
