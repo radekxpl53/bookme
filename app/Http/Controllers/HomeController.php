@@ -15,6 +15,7 @@ class HomeController extends Controller
         $popularBusinesses = Business::where('is_approved', true)
             ->withCount('reviews')
             ->withAvg('reviews', 'rating')
+            ->withMin('services', 'price')
             ->get()
             ->sortByDesc(function ($business) use ($minVotes, $globalAvg) {
                 $votes = $business->reviews_count;

@@ -12,8 +12,8 @@
 
             <form action="{{ route('szukaj') }}" method="GET" class="row g-2 justify-content-center">
                 <div class="col-md-4">
-                    <input type="text" name="usluga" class="form-control"
-                           placeholder="Czego szukasz? (np. strzyżenie)">
+                    <input type="text" name="q" class="form-control"
+                           placeholder="Usługa lub nazwa lokalu (np. strzyżenie)">
                 </div>
                 <div class="col-md-3">
                     <input type="text" name="lokalizacja" class="form-control"
@@ -50,13 +50,13 @@
         @forelse($popularBusinesses as $business)
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow-sm h-100">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title mb-1">{{ $business->name }}</h5>
                         <p class="text-muted small mb-2">
                             <i class="bi bi-geo-alt"></i> {{ $business->address }}
                         </p>
 
-                        <p class="mb-3">
+                        <p class="mb-0">
                             <i class="bi bi-star-fill text-warning"></i>
                             <span class="fw-bold">
                                 {{ $business->reviews_avg_rating
@@ -66,7 +66,9 @@
                             <span class="text-muted small">({{ $business->reviews_count }} opinii)</span>
                         </p>
 
-                        <a href="{{ route('lokal.show', $business) }}" class="btn btn-outline-primary btn-sm w-100">Zobacz lokal</a>
+                        <div class="mt-auto pt-3">
+                            <a href="{{ route('lokal.show', $business) }}" class="btn btn-outline-primary btn-sm w-100">Zobacz lokal</a>
+                        </div>
                     </div>
                 </div>
             </div>

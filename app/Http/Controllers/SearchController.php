@@ -12,13 +12,21 @@ class SearchController extends Controller
 {
     public function index(Request $request, AvailabilityService $availability)
     {
-        $dateFrom = $request->filled('data_od')
-            ? Carbon::parse($request->input('data_od'))->startOfDay()
-            : ($request->filled('data') ? Carbon::parse($request->input('data'))->startOfDay() : Carbon::today());
+        $hasDateFilter = $request->filled('data_od') || $request->filled('data_do') || $request->filled('data');
 
-        $dateTo = $request->filled('data_do')
-            ? Carbon::parse($request->input('data_do'))->startOfDay()
-            : $dateFrom->copy();
+        if ($request->filled('data_od')) {
+            $dateFrom = Carbon::parse($request->input('data_od'))->startOfDay();
+        } elseif ($request->filled('data')) {
+            $dateFrom = Carbon::parse($request->input('data'))->startOfDay();
+        } else {
+            $dateFrom = Carbon::today();
+        }
+
+        if ($request->filled('data_do')) {
+            $dateTo = Carbon::parse($request->input('data_do'))->startOfDay();
+        } else {
+            $dateTo = $dateFrom->copy();
+        }
 
         if ($dateTo->lessThan($dateFrom)) {
             $dateTo = $dateFrom->copy();
@@ -40,8 +48,12 @@ class SearchController extends Controller
             )
             ->with(['business', 'employees.workingHours']);
 
-        if ($request->filled('usluga')) {
-            $query->where('services.name', 'ILIKE', '%'.$request->input('usluga').'%');
+        if ($request->filled('q')) {
+            $term = $request->input('q');
+            $query->where(function ($q) use ($term) {
+                $q->where('services.name', 'ILIKE', '%'.$term.'%')
+                    ->orWhere('businesses.name', 'ILIKE', '%'.$term.'%');
+            });
         }
 
         if ($request->filled('lokalizacja')) {
@@ -98,7 +110,9 @@ class SearchController extends Controller
         $timeFrom = $request->input('godzina_od');
         $timeTo = $request->input('godzina_do');
         foreach ($services as $service) {
-            $service->slots = $availability->findSlotsInRange($service, $dateFrom, $dateTo, $timeFrom, $timeTo);
+            $service->slotsCount = $hasDateFilter
+                ? count($availability->findSlotsInRange($service, $dateFrom, $dateTo, $timeFrom, $timeTo, 100))
+                : null;
         }
 
         $pins = $services->getCollection()
@@ -121,6 +135,7 @@ class SearchController extends Controller
             'categories' => $categories,
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
+            'hasDateFilter' => $hasDateFilter,
         ]);
     }
 }

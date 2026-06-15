@@ -33,43 +33,37 @@
 
         <hr class="my-3">
 
-        @php $multiDay = $dateFrom->toDateString() !== $dateTo->toDateString(); @endphp
-        <div>
-            <p class="small text-muted mb-2">
+        @php
+            $bookingParams = [
+                'business'   => $service->business_id,
+                'service_id' => $service->id,
+            ];
+            $singleDay = $hasDateFilter && $dateFrom->toDateString() === $dateTo->toDateString();
+            if ($singleDay) {
+                $bookingParams['date'] = $dateFrom->toDateString();
+            }
+        @endphp
+
+        @if($hasDateFilter)
+            <p class="small mb-2 {{ $service->slotsCount > 0 ? 'text-success' : 'text-muted' }}">
                 <i class="bi bi-calendar-check"></i>
-                @if($multiDay)
-                    Najbliższe wolne terminy:
+                @if($service->slotsCount > 0)
+                    Dostępne terminy
+                    @if($singleDay)
+                        — {{ $dateFrom->translatedFormat('j F') }}
+                    @else
+                        w wybranym zakresie dat
+                    @endif
+                    ({{ $service->slotsCount }}{{ $service->slotsCount >= 100 ? '+' : '' }}).
                 @else
-                    Wolne terminy na {{ $dateFrom->translatedFormat('l, j F') }}:
+                    Brak wolnych terminów w wybranym zakresie.
                 @endif
             </p>
+        @endif
 
-            @if(count($service->slots) > 0)
-                <div class="d-flex flex-wrap gap-2">
-                    @foreach($service->slots as $slot)
-                        <a class="btn btn-outline-primary btn-sm"
-                           href="{{ route('rezerwacja.create', [
-                                'business'    => $service->business_id,
-                                'service_id'  => $service->id,
-                                'employee_id' => $slot['employee_id'],
-                                'date'        => $slot['time']->toDateString(),
-                                'time'        => $slot['time']->format('H:i'),
-                           ]) }}"
-                           title="{{ $slot['employee_name'] }}">
-                            @if($multiDay)
-                                {{ $slot['time']->translatedFormat('D j.m, H:i') }}
-                            @else
-                                {{ $slot['time']->format('H:i') }}
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-            @else
-                <p class="text-muted small mb-0">
-                    Brak wolnych terminów w wybranym zakresie. Zmień daty lub zobacz
-                    <a href="{{ route('lokal.show', $service->business) }}">profil lokalu</a>.
-                </p>
-            @endif
-        </div>
+        <a href="{{ route('rezerwacja.create', $bookingParams) }}"
+           class="btn btn-primary btn-sm">
+            <i class="bi bi-calendar-plus"></i> Umów wizytę
+        </a>
     </div>
 </div>

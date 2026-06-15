@@ -16,9 +16,9 @@
                     <form action="{{ route('szukaj') }}" method="GET" id="filtryForm">
 
                         <div class="mb-3">
-                            <label class="form-label">Usługa</label>
-                            <input type="text" name="usluga" class="form-control form-control-sm"
-                                   value="{{ request('usluga') }}" placeholder="np. strzyżenie">
+                            <label class="form-label">Szukaj</label>
+                            <input type="text" name="q" class="form-control form-control-sm"
+                                   value="{{ request('q') }}" placeholder="np. strzyżenie, nazwa salonu">
                         </div>
 
                         <div class="mb-3">
@@ -42,12 +42,12 @@
                             <div class="input-group input-group-sm mb-2">
                                 <span class="input-group-text">Od</span>
                                 <input type="date" name="data_od" class="form-control"
-                                       value="{{ $dateFrom->toDateString() }}" min="{{ now()->toDateString() }}">
+                                       value="{{ request('data_od') }}" min="{{ now()->toDateString() }}">
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Do</span>
                                 <input type="date" name="data_do" class="form-control"
-                                       value="{{ $dateTo->toDateString() }}" min="{{ now()->toDateString() }}">
+                                       value="{{ request('data_do') }}" min="{{ now()->toDateString() }}">
                             </div>
                         </div>
 
@@ -117,8 +117,8 @@
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <span class="text-muted">
                     Znaleziono <strong>{{ $services->total() }}</strong> usług
-                    @if(request('usluga'))
-                        dla „{{ request('usluga') }}"
+                    @if(request('q'))
+                        dla „{{ request('q') }}"
                     @endif
                 </span>
 
