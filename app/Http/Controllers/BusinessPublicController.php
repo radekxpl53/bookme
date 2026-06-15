@@ -13,8 +13,12 @@ class BusinessPublicController extends Controller
         abort_if(!$business->is_approved, 404);
 
         $business->load([
+            'photos' => fn ($q) => $q->latest(),
             'services',
+            'employees' => fn ($q) => $q->where('is_active', true),
+            'employees.reviews' => fn ($q) => $q->latest(),
             'employees.reviews.user',
+            'employees.portfolio' => fn ($q) => $q->latest(),
             'employees.reviewImages',
             'reviews.user',
             'reviewImages',
