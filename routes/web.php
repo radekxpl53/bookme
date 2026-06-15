@@ -84,10 +84,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/biznesy', [AdminController::class, 'businesses'])->name('businesses');
     Route::post('/biznesy/{business}/approve', [AdminController::class, 'approveBusiness'])->name('businesses.approve');
     Route::post('/biznesy/{business}/reject', [AdminController::class, 'rejectBusiness'])->name('businesses.reject');
+    Route::get('/biznesy/{business}/edit', [AdminController::class, 'editBusiness'])->name('businesses.edit');
+    Route::put('/biznesy/{business}', [AdminController::class, 'updateBusiness'])->name('businesses.update');
+    Route::delete('/biznesy/{business}', [AdminController::class, 'destroyBusiness'])->name('businesses.destroy');
     Route::get('/uzytkownicy', [AdminController::class, 'users'])->name('users');
     Route::get('/uzytkownicy/{user}/edit', [AdminController::class, 'editUser'])->name('users.edit');
     Route::put('/uzytkownicy/{user}', [AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/uzytkownicy/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+    Route::get('/opinie', [AdminController::class, 'reviews'])->name('reviews');
+    Route::delete('/opinie/{type}/{id}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
 });
 
 require __DIR__.'/auth.php';

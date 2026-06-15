@@ -124,14 +124,25 @@
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-light text-center p-5 shadow-sm border-0 rounded-4">
-                    <i class="bi bi-shop display-1 text-muted mb-3 d-block"></i>
-                    <h4 class="text-muted">Nie masz jeszcze żadnych dodanych lokali.</h4>
-                    <p class="text-muted">Rozpocznij swoją działalność dodając pierwszy salon.</p>
-                    <a href="{{ route('biznes.lokale.create') }}" class="btn btn-primary mt-3 px-4 rounded-pill">
-                        Dodaj swój pierwszy biznes
-                    </a>
-                </div>
+                @if(auth()->user()->businesses()->exists())
+                    <div class="alert alert-light text-center p-5 shadow-sm border-0 rounded-4">
+                        <i class="bi bi-search display-1 text-muted mb-3 d-block"></i>
+                        <h4 class="text-muted">Brak wyników wyszukiwania</h4>
+                        <p class="text-muted">Nie znaleziono żadnych lokali pasujących do podanych kryteriów.</p>
+                        <a href="{{ route('biznes.lokale.index') }}" class="btn btn-outline-secondary mt-3 px-4 rounded-pill">
+                            Wyczyść filtry
+                        </a>
+                    </div>
+                @else
+                    <div class="alert alert-light text-center p-5 shadow-sm border-0 rounded-4">
+                        <i class="bi bi-shop display-1 text-muted mb-3 d-block"></i>
+                        <h4 class="text-muted">Nie masz jeszcze żadnych dodanych lokali.</h4>
+                        <p class="text-muted">Rozpocznij swoją działalność dodając pierwszy salon.</p>
+                        <a href="{{ route('biznes.lokale.create') }}" class="btn btn-primary mt-3 px-4 rounded-pill">
+                            Dodaj swój pierwszy biznes
+                        </a>
+                    </div>
+                @endif
             </div>
         @endforelse
     </div>

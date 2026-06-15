@@ -63,10 +63,15 @@
                 <div class="position-absolute top-0 end-0 p-3 opacity-25">
                     <i class="bi bi-star-fill display-1 text-warning"></i>
                 </div>
-                <div class="card-body position-relative z-1">
+                <div class="card-body position-relative z-1 d-flex flex-column">
                     <h6 class="text-uppercase text-muted fw-bold mb-1">Opinie w systemie</h6>
                     <h2 class="display-5 fw-bold mb-3">{{ $totalReviews }}</h2>
-                    <p class="text-muted small mb-0"><i class="bi bi-chat-square-quote me-1"></i>Oceny zebrane z całej platformy</p>
+                    <p class="text-muted small mb-3"><i class="bi bi-chat-square-quote me-1"></i>Oceny zebrane z całej platformy</p>
+                    <div class="mt-auto">
+                        <a href="{{ route('admin.reviews') }}" class="btn btn-sm btn-outline-warning text-dark border-warning w-100 fw-bold">
+                            Przeglądaj opinie <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
