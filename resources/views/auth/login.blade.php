@@ -32,9 +32,9 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">E-mail</label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                   value="{{ old('email') }}" required autofocus>
+                            <label for="login" class="form-label">E-mail lub Nazwa użytkownika</label>
+                            <input type="text" class="form-control" id="login" name="login"
+                                   value="{{ old('login') }}" required autofocus>
                         </div>
 
                         <div class="mb-3">

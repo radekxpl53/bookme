@@ -74,6 +74,38 @@ class AdminController extends Controller
         return back()->with('success', "Lokal został odrzucony i usunięty ze zgłoszeń.");
     }
 
+    public function editBusiness(Business $business)
+    {
+        return view('admin.businesses.edit', compact('business'));
+    }
+
+    public function updateBusiness(Request $request, Business $business)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_approved' => 'boolean',
+        ]);
+
+        $business->update([
+            'name' => $validated['name'],
+            'category' => $validated['category'],
+            'address' => $validated['address'],
+            'description' => $validated['description'] ?? '',
+            'is_approved' => $request->has('is_approved'),
+        ]);
+
+        return redirect()->route('admin.businesses')->with('success', 'Lokal został zaktualizowany.');
+    }
+
+    public function destroyBusiness(Business $business)
+    {
+        $business->delete();
+        return back()->with('success', 'Lokal został pomyślnie usunięty.');
+    }
+
     public function users(Request $request)
     {
         $role = $request->get('role', 'all');
@@ -132,5 +164,77 @@ class AdminController extends Controller
         $user->delete();
 
         return back()->with('success', 'Użytkownik został pomyślnie usunięty.');
+    }
+
+    public function reviews(Request $request)
+    {
+        $type = $request->get('type', 'all'); // 'business', 'employee', 'all'
+        $search = $request->get('search');
+        $rating = $request->get('rating');
+
+        $reviews = collect();
+
+        if ($type === 'all' || $type === 'business') {
+            $q = \App\Models\BusinessReview::with(['business', 'user'])->latest('created_at');
+            if ($rating) $q->where('rating', $rating);
+            if ($search) {
+                $q->where(function($sub) use ($search) {
+                    $sub->where('comment', 'like', "%{$search}%")
+                        ->orWhereHas('user', function($u) use ($search) {
+                            $u->where('username', 'like', "%{$search}%")
+                              ->orWhere('first_name', 'like', "%{$search}%")
+                              ->orWhere('surname', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('business', function($b) use ($search) {
+                            $b->where('name', 'like', "%{$search}%");
+                        });
+                });
+            }
+            $businessReviews = $q->get()->map(function($item) {
+                $item->review_type = 'business';
+                $item->target_name = $item->business->name;
+                return $item;
+            });
+            $reviews = $reviews->concat($businessReviews);
+        }
+
+        if ($type === 'all' || $type === 'employee') {
+            $q = \App\Models\EmployeeReview::with(['employee', 'user'])->latest('created_at');
+            if ($rating) $q->where('rating', $rating);
+            if ($search) {
+                $q->where(function($sub) use ($search) {
+                    $sub->where('comment', 'like', "%{$search}%")
+                        ->orWhereHas('user', function($u) use ($search) {
+                            $u->where('username', 'like', "%{$search}%")
+                              ->orWhere('first_name', 'like', "%{$search}%")
+                              ->orWhere('surname', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('employee', function($e) use ($search) {
+                            $e->where('name', 'like', "%{$search}%");
+                        });
+                });
+            }
+            $employeeReviews = $q->get()->map(function($item) {
+                $item->review_type = 'employee';
+                $item->target_name = $item->employee->name;
+                return $item;
+            });
+            $reviews = $reviews->concat($employeeReviews);
+        }
+
+        $reviews = $reviews->sortByDesc('created_at');
+
+        return view('admin.reviews', compact('reviews', 'type', 'search', 'rating'));
+    }
+
+    public function destroyReview($type, $id)
+    {
+        if ($type === 'business') {
+            \App\Models\BusinessReview::findOrFail($id)->delete();
+        } elseif ($type === 'employee') {
+            \App\Models\EmployeeReview::findOrFail($id)->delete();
+        }
+
+        return back()->with('success', 'Opinia została pomyślnie usunięta.');
     }
 }
