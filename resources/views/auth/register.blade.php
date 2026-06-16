@@ -12,59 +12,70 @@
                 </div>
                 <div class="card-body">
 
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
 
                         <div class="mb-3">
                             <label for="username" class="form-label">Nazwa użytkownika *</label>
-                            <input type="text" class="form-control" id="username" name="username"
+                            <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username"
                                    value="{{ old('username') }}" required autofocus>
+                            @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="first_name" class="form-label">Imię *</label>
-                                <input type="text" class="form-control" id="first_name" name="first_name"
+                                <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name"
                                        value="{{ old('first_name') }}" required>
+                                @error('first_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="surname" class="form-label">Nazwisko *</label>
-                                <input type="text" class="form-control" id="surname" name="surname"
+                                <input type="text" class="form-control @error('surname') is-invalid @enderror" id="surname" name="surname"
                                        value="{{ old('surname') }}" required>
+                                @error('surname')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Telefon</label>
-                            <input type="text" class="form-control" id="phone" name="phone"
+                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone"
                                    value="{{ old('phone') }}">
+                            @error('phone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">E-mail *</label>
-                            <input type="email" class="form-control" id="email" name="email"
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"
                                    value="{{ old('email') }}" required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Hasło *</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="password_confirmation" class="form-label">Powtórz hasło *</label>
-                            <input type="password" class="form-control" id="password_confirmation"
+                            <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="password_confirmation"
                                    name="password_confirmation" required>
+                            @error('password_confirmation')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="d-grid">
