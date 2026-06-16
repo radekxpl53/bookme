@@ -19,5 +19,11 @@ sleep 5
 # Uruchom migracje
 php artisan migrate --force
 
+# Symlink do storage
+php artisan storage:link
+
+# Zaseeduj baze
+php artisan db:seed --force
+
 # Uruchom serwer
 php artisan serve --host=0.0.0.0 --port=8000

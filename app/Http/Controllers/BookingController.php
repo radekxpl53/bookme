@@ -46,7 +46,7 @@ class BookingController extends Controller
 
         if ($service && ! $time) {
             foreach ($specialists as $e) {
-                $e->slots = $availability->findSlots($service, $day, null, null, 12, $e->id);
+                $e->slots = $availability->findSlots($service, $day, null, null, 100, $e->id);
             }
         }
 
