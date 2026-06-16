@@ -11,7 +11,7 @@ class AvailabilityService
 {
     const STEP_MINUTES = 15;
 
-    public function findSlots(Service $service, Carbon $day, ?string $from = null, ?string $to = null, int $limit = 6, ?int $employeeId = null): array
+    public function findSlots(Service $service, Carbon $day, ?string $from = null, ?string $to = null, int $limit = 6, ?int $employeeId = null, ?int $ignoreAppointmentId = null): array
     {
         $isoDay = $day->dayOfWeekIso;
 
@@ -46,6 +46,7 @@ class AvailabilityService
             $booked = Appointment::where('employee_id', $employee->id)
                 ->whereDate('start_at', $day->toDateString())
                 ->where('status', '!=', 'cancelled')
+                ->when($ignoreAppointmentId, fn ($q) => $q->where('id', '!=', $ignoreAppointmentId))
                 ->get(['start_at', 'finish_at']);
 
             $cursor = $start->copy();
@@ -114,7 +115,7 @@ class AvailabilityService
         return $slots;
     }
 
-    public function isAvailable(Service $service, Employee $employee, Carbon $start): bool
+    public function isAvailable(Service $service, Employee $employee, Carbon $start, ?int $ignoreAppointmentId = null): bool
     {
         if (! $employee->is_active || $start->isPast()) {
             return false;
@@ -146,6 +147,7 @@ class AvailabilityService
             ->where('status', '!=', 'cancelled')
             ->where('start_at', '<', $finish)
             ->where('finish_at', '>', $start)
+            ->when($ignoreAppointmentId, fn ($q) => $q->where('id', '!=', $ignoreAppointmentId))
             ->exists();
 
         return ! $collides;

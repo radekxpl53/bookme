@@ -19,7 +19,7 @@
                     </p>
                     <p class="text-muted small mb-4">
                         <i class="bi bi-shop"></i> {{ $appointment->service->business->name }} •
-                        {{ $appointment->start_at->translatedFormat('j F Y, H:i') }}
+                        {{ $appointment->start_at->format('d.m.Y, H:i') }}
                     </p>
 
                     @if($errors->any())

@@ -17,7 +17,10 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'username'   => ['required', 'string', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'first_name' => ['required', 'string', 'max:255'],
+            'surname'    => ['required', 'string', 'max:255'],
+            'phone'      => ['required', 'string', 'regex:/^(\+48)?[0-9]{9}$/'],
             'email' => [
                 'required',
                 'string',
@@ -26,6 +29,13 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone.regex' => 'Podaj poprawny numer telefonu: 9 cyfr, opcjonalnie z prefiksem +48.',
         ];
     }
 }

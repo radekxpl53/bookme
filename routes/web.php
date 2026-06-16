@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessPublicController;
@@ -18,13 +16,6 @@ use App\Http\Controllers\BlacklistController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BusinessPhotoController;
 use App\Http\Controllers\EmployeePortfolioController;
-
-
-Route::get('/dev-login', function () {
-    $owner = User::where('email', 'wlasciciel@bookme.test')->first();
-    Auth::login($owner);
-    return redirect()->route('biznes.lokale.index');
-});
 
 Route::middleware(['not_admin'])->group(function () {
 
@@ -45,6 +36,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/moje-wizyty', [ClientAppointmentController::class, 'index'])->name('klient.wizyty.index');
     Route::patch('/moje-wizyty/{appointment}/anuluj', [ClientAppointmentController::class, 'cancel'])->name('klient.wizyty.anuluj');
+    Route::get('/moje-wizyty/{appointment}/zmien-termin', [ClientAppointmentController::class, 'reschedule'])->name('klient.wizyty.zmien');
+    Route::patch('/moje-wizyty/{appointment}/zmien-termin', [ClientAppointmentController::class, 'rescheduleStore'])->name('klient.wizyty.zmien.zapisz');
 
     Route::get('/moje-wizyty/{appointment}/opinia', [ReviewController::class, 'create'])->name('klient.opinia.create');
     Route::post('/moje-wizyty/{appointment}/opinia', [ReviewController::class, 'store'])->name('klient.opinia.store');

@@ -7,6 +7,8 @@ use App\Models\Service;
 use App\Services\AvailabilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class SearchController extends Controller
 {
@@ -105,14 +107,34 @@ class SearchController extends Controller
                 break;
         }
 
-        $services = $query->paginate(8)->withQueryString();
-
         $timeFrom = $request->input('godzina_od');
         $timeTo = $request->input('godzina_do');
-        foreach ($services as $service) {
-            $service->slotsCount = $hasDateFilter
-                ? count($availability->findSlotsInRange($service, $dateFrom, $dateTo, $timeFrom, $timeTo, 100))
-                : null;
+        $perPage = 8;
+
+        if ($hasDateFilter) {
+            $matching = $query->get();
+
+            foreach ($matching as $service) {
+                $service->slotsCount = count(
+                    $availability->findSlotsInRange($service, $dateFrom, $dateTo, $timeFrom, $timeTo, 100)
+                );
+            }
+
+            $available = $matching->filter(fn ($s) => $s->slotsCount > 0)->values();
+
+            $page = Paginator::resolveCurrentPage('page');
+            $services = new LengthAwarePaginator(
+                $available->forPage($page, $perPage)->values(),
+                $available->count(),
+                $perPage,
+                $page,
+                ['path' => Paginator::resolveCurrentPath(), 'query' => $request->query()]
+            );
+        } else {
+            $services = $query->paginate($perPage)->withQueryString();
+            foreach ($services as $service) {
+                $service->slotsCount = null;
+            }
         }
 
         $pins = $services->getCollection()

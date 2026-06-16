@@ -49,15 +49,18 @@
     <div class="row g-4 mb-5">
         @forelse($popularBusinesses as $business)
             <div class="col-md-6 col-lg-4">
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-100 position-relative">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title mb-1">{{ $business->name }}</h5>
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h5 class="card-title mb-0">{{ $business->name }}</h5>
+                            <span class="badge bg-light text-dark border ms-2">{{ $business->category }}</span>
+                        </div>
                         <p class="text-muted small mb-2">
                             <i class="bi bi-geo-alt"></i> {{ $business->address }}
                         </p>
 
-                        <p class="mb-0">
-                            <i class="bi bi-star-fill text-warning"></i>
+                        <p class="mb-1">
+                            @include('partials.stars', ['rating' => round($business->reviews_avg_rating ?? 0)])
                             <span class="fw-bold">
                                 {{ $business->reviews_avg_rating
                                     ? number_format($business->reviews_avg_rating, 1)
@@ -66,8 +69,15 @@
                             <span class="text-muted small">({{ $business->reviews_count }} opinii)</span>
                         </p>
 
+                        @if($business->services_min_price)
+                            <p class="small text-muted mb-0">
+                                Usługi już od
+                                <span class="fw-bold text-primary">{{ number_format($business->services_min_price, 0, ',', ' ') }} zł</span>
+                            </p>
+                        @endif
+
                         <div class="mt-auto pt-3">
-                            <a href="{{ route('lokal.show', $business) }}" class="btn btn-outline-primary btn-sm w-100">Zobacz lokal</a>
+                            <a href="{{ route('lokal.show', $business) }}" class="btn btn-outline-primary btn-sm w-100 stretched-link">Zobacz lokal</a>
                         </div>
                     </div>
                 </div>

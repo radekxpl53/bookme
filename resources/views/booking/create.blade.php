@@ -86,7 +86,7 @@
                         </form>
 
                         <p class="small text-muted mb-3">
-                            Dostępność na {{ $day->translatedFormat('l, j F') }}:
+                            Dostępność na {{ $day->format('d.m.Y') }}:
                         </p>
 
                         @forelse($specialists as $e)
@@ -141,7 +141,7 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span class="text-muted">Termin</span>
-                                <strong>{{ \Carbon\Carbon::parse($day->toDateString().' '.$time)->translatedFormat('l, j F Y, H:i') }}</strong>
+                                <strong>{{ \Carbon\Carbon::parse($day->toDateString().' '.$time)->format('d.m.Y, H:i') }}</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span class="text-muted">Czas trwania</span><strong>{{ $service->duration_minutes }} min</strong>

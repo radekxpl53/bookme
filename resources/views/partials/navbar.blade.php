@@ -48,7 +48,9 @@
                         </li>
                     @endif
                     <li class="nav-item">
-                        <span class="nav-link text-white">Witaj, {{ Auth::user()->first_name }}!</span>
+                        <a class="nav-link text-white" href="{{ route('profile.edit') }}">
+                            <i class="bi bi-person-gear"></i> {{ Auth::user()->first_name }}
+                        </a>
                     </li>
                     <li class="nav-item ms-lg-2">
                         <form method="POST" action="{{ route('logout') }}" class="d-inline">

@@ -50,7 +50,7 @@
                 @if($service->slotsCount > 0)
                     Dostępne terminy
                     @if($singleDay)
-                        — {{ $dateFrom->translatedFormat('j F') }}
+                        — {{ $dateFrom->format('d.m.Y') }}
                     @else
                         w wybranym zakresie dat
                     @endif

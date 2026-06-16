@@ -28,7 +28,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <span class="text-muted">Termin</span>
-                        <strong>{{ $appointment->start_at->translatedFormat('l, j F Y, H:i') }}</strong>
+                        <strong>{{ $appointment->start_at->format('d.m.Y, H:i') }}</strong>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <span class="text-muted">Cena</span>

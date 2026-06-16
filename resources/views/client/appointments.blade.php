@@ -43,7 +43,7 @@
                                 </p>
                                 <p class="text-muted small mb-0">
                                     <i class="bi bi-calendar-event"></i>
-                                    {{ $appt->start_at->translatedFormat('l, j F Y, H:i') }}
+                                    {{ $appt->start_at->format('d.m.Y, H:i') }}
                                 </p>
                             </div>
                             <div class="col-md-4 text-md-end mt-3 mt-md-0">
@@ -51,14 +51,19 @@
                                     {{ $statuses[$appt->status]['label'] ?? $appt->status }}
                                 </span>
                                 <div class="fw-bold mb-2">{{ number_format($appt->total_price, 2) }} zł</div>
-                                <form action="{{ route('klient.wizyty.anuluj', $appt) }}" method="POST"
-                                      onsubmit="return confirm('Na pewno anulować tę wizytę?');">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        <i class="bi bi-x-circle"></i> Anuluj
-                                    </button>
-                                </form>
+                                <div class="d-flex gap-2 justify-content-md-end">
+                                    <a href="{{ route('klient.wizyty.zmien', $appt) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-calendar-event"></i> Zmień termin
+                                    </a>
+                                    <form action="{{ route('klient.wizyty.anuluj', $appt) }}" method="POST"
+                                          onsubmit="return confirm('Na pewno anulować tę wizytę?');">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-x-circle"></i> Anuluj
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -82,7 +87,7 @@
                                 <h6 class="mb-1">{{ $appt->service->name }}</h6>
                                 <p class="text-muted small mb-0">
                                     {{ $appt->service->business->name }} • {{ $appt->employee->name }} •
-                                    {{ $appt->start_at->translatedFormat('j F Y, H:i') }}
+                                    {{ $appt->start_at->format('d.m.Y, H:i') }}
                                 </p>
                             </div>
                             <div class="col-md-4 text-md-end mt-2 mt-md-0">

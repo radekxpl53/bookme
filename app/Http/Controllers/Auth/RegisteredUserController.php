@@ -29,9 +29,11 @@ class RegisteredUserController extends Controller
             'username'   => ['required', 'string', 'max:255', Rule::unique(User::class)],
             'first_name' => ['required', 'string', 'max:255'],
             'surname'    => ['required', 'string', 'max:255'],
-            'phone'      => ['nullable', 'string', 'max:20'],
+            'phone'      => ['required', 'string', 'regex:/^(\+48)?[0-9]{9}$/'],
             'email'      => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)],
             'password'   => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'phone.regex' => 'Podaj poprawny numer telefonu: 9 cyfr, opcjonalnie z prefiksem +48.',
         ]);
 
         $user = User::create([
