@@ -84,7 +84,6 @@ graph TD
     U([Użytkownik]) --> B["Przeglądarka<br/>Blade · Bootstrap 5 (CDN) · Leaflet"]
     B -->|"żądania HTTP / formularze"| R["Routing<br/>web.php · middleware: auth, owner, admin, not_admin"]
     R --> C["Kontrolery<br/>Search · Booking · Review · Business · Admin ..."]
-    C -->|"logika dostępności"| S["AvailabilityService"]
     C -->|"Eloquent ORM"| M["Modele domenowe<br/>Business · Service · Appointment ..."]
     M -->|"SQL"| DB[("PostgreSQL 16")]
     C -.->|"geokodowanie adresu"| NOM["Nominatim (OSM)"]
