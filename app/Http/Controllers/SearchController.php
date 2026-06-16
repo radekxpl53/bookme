@@ -34,6 +34,20 @@ class SearchController extends Controller
             $dateTo = $dateFrom->copy();
         }
 
+        $maxDate = Carbon::today()->addMonths(6);
+        if ($dateFrom->lessThan(Carbon::today())) {
+            $dateFrom = Carbon::today();
+        }
+        if ($dateFrom->greaterThan($maxDate)) {
+            $dateFrom = $maxDate->copy();
+        }
+        if ($dateTo->greaterThan($maxDate)) {
+            $dateTo = $maxDate->copy();
+        }
+        if ($dateTo->lessThan($dateFrom)) {
+            $dateTo = $dateFrom->copy();
+        }
+
         $query = Service::query()
             ->select('services.*', 'br.avg_rating', 'br.reviews_count')
             ->join('businesses', 'businesses.id', '=', 'services.business_id')

@@ -42,12 +42,14 @@
                             <div class="input-group input-group-sm mb-2">
                                 <span class="input-group-text">Od</span>
                                 <input type="date" name="data_od" class="form-control"
-                                       value="{{ request('data_od') }}" min="{{ now()->toDateString() }}">
+                                       value="{{ request('data_od') }}" min="{{ now()->toDateString() }}"
+                                       max="{{ now()->addMonths(6)->toDateString() }}">
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Do</span>
                                 <input type="date" name="data_do" class="form-control"
-                                       value="{{ request('data_do') }}" min="{{ now()->toDateString() }}">
+                                       value="{{ request('data_do') }}" min="{{ now()->toDateString() }}"
+                                       max="{{ now()->addMonths(6)->toDateString() }}">
                             </div>
                         </div>
 
