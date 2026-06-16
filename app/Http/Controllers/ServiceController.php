@@ -11,7 +11,8 @@ class ServiceController extends Controller
 {
     private function authorizeOwner(Business $business): void
     {
-        if ($business->owner_id !== Auth::id()) {
+        $user = Auth::user();
+        if ($business->owner_id !== $user->id && !$user->is_admin) {
             abort(403);
         }
     }
@@ -88,6 +89,8 @@ class ServiceController extends Controller
             abort(404);
         }
 
+        $service->appointments()->delete();
+        $service->employees()->detach();
         $service->delete();
 
         return redirect()->route('biznes.lokale.uslugi.index', $business)

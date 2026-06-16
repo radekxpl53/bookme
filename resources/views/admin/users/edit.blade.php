@@ -60,6 +60,11 @@
                     @enderror
                 </div>
 
+                <div class="mb-4 form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="is_admin" name="is_admin" value="1" {{ old('is_admin', $user->is_admin) ? 'checked' : '' }}>
+                    <label class="form-check-label text-danger fw-bold" for="is_admin">Uprawnienia Administratora (Pełny dostęp do platformy)</label>
+                </div>
+
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary fw-bold">Zapisz zmiany</button>
                 </div>

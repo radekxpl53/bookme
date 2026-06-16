@@ -9,7 +9,17 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Edycja lokalu: {{ $business->name }}</h5>
-                    <a href="{{ route('admin.businesses') }}" class="btn btn-sm btn-light">Powrót</a>
+                    <div>
+                        <a href="{{ route('biznes.lokale.zdjecia.index', $business) }}" class="btn btn-sm btn-light fw-bold text-primary shadow-sm me-2">
+                            <i class="bi bi-images"></i> Zarządzaj Portfolio Lokalu
+                        </a>
+                        <a href="{{ route('biznes.lokale.pracownicy.index', $business) }}" class="btn btn-sm btn-light fw-bold text-primary shadow-sm me-2">
+                            <i class="bi bi-people"></i> Zarządzaj Pracownikami
+                        </a>
+                        <a href="{{ route('biznes.lokale.uslugi.index', $business) }}" class="btn btn-sm btn-light fw-bold text-primary shadow-sm">
+                            <i class="bi bi-list-check"></i> Zarządzaj Usługami
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
 

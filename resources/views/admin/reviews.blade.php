@@ -90,7 +90,10 @@
                             <td class="align-middle">
                                 {{ $review->created_at->format('d.m.Y H:i') }}
                             </td>
-                            <td class="text-end align-middle">
+                            <td class="text-end align-middle text-nowrap">
+                                <a href="{{ route('admin.reviews.edit', ['type' => $review->review_type, 'id' => $review->id]) }}" class="btn btn-sm btn-primary" title="Edytuj opinię">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
                                 <form action="{{ route('admin.reviews.destroy', ['type' => $review->review_type, 'id' => $review->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć tę opinię?');">
                                     @csrf
                                     @method('DELETE')

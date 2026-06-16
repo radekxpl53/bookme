@@ -7,7 +7,11 @@
             <h2 class="mb-0 fw-bold"><i class="bi bi-calendar-week text-primary me-2"></i>Kalendarz Wizyt</h2>
             <nav aria-label="breadcrumb" class="mt-2">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('biznes.lokale.index') }}">Moje lokale</a></li>
+                    @if(Auth::user()->isAdmin())
+                        <li class="breadcrumb-item"><a href="{{ route('admin.businesses.edit', $business) }}">Edycja lokalu</a></li>
+                    @else
+                        <li class="breadcrumb-item"><a href="{{ route('biznes.lokale.index') }}">Moje lokale</a></li>
+                    @endif
                     <li class="breadcrumb-item active" aria-current="page">{{ $business->name }}</li>
                 </ol>
             </nav>
