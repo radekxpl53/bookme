@@ -15,7 +15,7 @@ class IsOwner
         /** @var User|null $user */
         $user = Auth::user();
 
-        if ($user && $user->isOwner()) {
+        if ($user && ($user->isOwner() || $user->is_admin)) {
             return $next($request);
         }
 

@@ -1,23 +1,19 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ (Auth::check() && Auth::user()->isAdmin()) ? route('admin.dashboard') : route('home') }}">BookMe</a>
+        <a class="navbar-brand fw-bold" href="{{ route('home') }}">BookMe</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                 aria-controls="mainNav" aria-expanded="false" aria-label="Przełącz nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
-            @if(!Auth::check() || !Auth::user()->isAdmin())
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Strona główna</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('szukaj') }}">Szukaj usługi</a>
-                    </li>
-                </ul>
-            @else
-                <ul class="navbar-nav me-auto"></ul>
-            @endif
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('home') }}">Strona główna</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('szukaj') }}">Szukaj usługi</a>
+                </li>
+            </ul>
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 @auth
                     @if(Auth::user()->isAdmin())
@@ -33,20 +29,18 @@
                                 <i class="bi bi-shop"></i> Moje lokale
                             </a>
                         </li>
-                    @elseif(!Auth::user()->isAdmin())
+                    @else
                         <li class="nav-item">
                             <a class="nav-link text-success fw-bold" href="{{ route('biznes.lokale.create') }}">
                                 <i class="bi bi-plus-circle"></i> Dodaj swój salon
                             </a>
                         </li>
                     @endif
-                    @if(!Auth::user()->isAdmin())
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('klient.wizyty.index') }}">
-                                <i class="bi bi-calendar-check"></i> Moje wizyty
-                            </a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('klient.wizyty.index') }}">
+                            <i class="bi bi-calendar-check"></i> Moje wizyty
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ route('profile.edit') }}">
                             <i class="bi bi-person-gear"></i> {{ Auth::user()->first_name }}

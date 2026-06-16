@@ -10,9 +10,15 @@
             <p class="text-muted mb-0">{{ $business->name }}</p>
         </div>
         <div>
-            <a href="{{ route('biznes.lokale.index') }}" class="btn btn-outline-secondary me-2">
-                <i class="bi bi-arrow-left"></i> Moje lokale
-            </a>
+            @if(Auth::user()->isAdmin())
+                <a href="{{ route('admin.businesses.edit', $business) }}" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-left"></i> Powrót do edycji
+                </a>
+            @else
+                <a href="{{ route('biznes.lokale.index') }}" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-left"></i> Moje lokale
+                </a>
+            @endif
             <a href="{{ route('biznes.lokale.uslugi.create', $business) }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Dodaj usługę
             </a>
