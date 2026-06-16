@@ -48,6 +48,8 @@ class BusinessCalendarController extends Controller
             } elseif ($apt->status === 'pending') {
                 $color = '#ffc107';
                 $textColor = '#000000';
+            } elseif ($apt->status === 'completed') {
+                $color = '#198754'; // Zakończona - zielony
             }
 
             return [
@@ -58,6 +60,7 @@ class BusinessCalendarController extends Controller
                 'backgroundColor' => $color,
                 'borderColor' => $color,
                 'textColor' => $textColor,
+                'display' => 'block', // Zmienia wygląd kropek na pełne bloki w kalendarzu miesięcznym
                 'extendedProps' => [
                     'client_name' => $apt->client->first_name . ' ' . $apt->client->surname,
                     'client_phone' => $apt->client->phone ?? 'Brak numeru',
@@ -93,7 +96,7 @@ class BusinessCalendarController extends Controller
     {
         $colors = [
             '#0d6efd',
-            '#198754',
+            '#6610f2', // Zastąpiono zielony (#198754) indygo, żeby zielony był tylko dla zakończonych
             '#dc3545',
             '#fd7e14',
             '#6f42c1',

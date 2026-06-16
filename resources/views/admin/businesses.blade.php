@@ -86,10 +86,14 @@
                                         </button>
                                     </form>
                                 @endif
-                                <form action="{{ route('admin.businesses.reject', $business) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz odrzucić i trwale usunąć ten lokal z systemu?');">
+                                <a href="{{ route('admin.businesses.edit', $business) }}" class="btn btn-sm btn-primary" title="Edytuj">
+                                    <i class="bi bi-pencil"></i> Edytuj
+                                </a>
+                                <form action="{{ route('admin.businesses.destroy', $business) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz usunąć ten lokal z systemu?');">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Odrzuć/Usuń">
-                                        <i class="bi bi-trash"></i> {{ $business->is_approved ? 'Usuń' : 'Odrzuć' }}
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Usuń">
+                                        <i class="bi bi-trash"></i> Usuń
                                     </button>
                                 </form>
                             </td>
