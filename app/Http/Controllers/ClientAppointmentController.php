@@ -68,8 +68,11 @@ class ClientAppointmentController extends Controller
         $this->ensureReschedulable($appointment);
 
         $validated = $request->validate([
-            'date' => 'required|date',
+            'date' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:'.now()->addMonths(6)->toDateString()],
             'time' => 'required|date_format:H:i',
+        ], [
+            'date.before_or_equal' => 'Można rezerwować maksymalnie pół roku naprzód.',
+            'date.after_or_equal' => 'Nie można rezerwować w przeszłości.',
         ]);
 
         $appointment->load(['service', 'employee.workingHours']);

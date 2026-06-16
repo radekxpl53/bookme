@@ -36,7 +36,8 @@
                         <div class="col-auto">
                             <label class="form-label mb-0">Dzień</label>
                             <input type="date" name="date" class="form-control form-control-sm"
-                                   value="{{ $day->toDateString() }}" min="{{ now()->toDateString() }}">
+                                   value="{{ $day->toDateString() }}" min="{{ now()->toDateString() }}"
+                                   max="{{ now()->addMonths(6)->toDateString() }}">
                         </div>
                         <div class="col-auto">
                             <button type="submit" class="btn btn-primary btn-sm">Pokaż terminy</button>

@@ -48,6 +48,7 @@ class SearchController extends Controller
                 '=',
                 'businesses.id'
             )
+            ->where('businesses.is_approved', true)
             ->with(['business', 'employees.workingHours']);
 
         if ($request->filled('q')) {

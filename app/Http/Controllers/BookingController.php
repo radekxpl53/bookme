@@ -16,6 +16,8 @@ class BookingController extends Controller
 {
     public function create(Request $request, Business $business, AvailabilityService $availability)
     {
+        abort_if(! $business->is_approved, 404);
+
         $business->load([
             'services',
             'employees' => fn ($q) => $q->where('is_active', true),
@@ -68,16 +70,22 @@ class BookingController extends Controller
         $validated = $request->validate([
             'service_id' => 'required|exists:services,id',
             'employee_id' => 'required|exists:employees,id',
-            'date' => 'required|date',
+            'date' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:'.now()->addMonths(6)->toDateString()],
             'time' => 'required|date_format:H:i',
+        ], [
+            'date.before_or_equal' => 'Można rezerwować maksymalnie pół roku naprzód.',
+            'date.after_or_equal' => 'Nie można rezerwować w przeszłości.',
         ]);
 
-        $service = Service::findOrFail($validated['service_id']);
+        $service = Service::with('business')->findOrFail($validated['service_id']);
         $employee = Employee::with(['workingHours', 'services'])->findOrFail($validated['employee_id']);
 
         $start = Carbon::parse($validated['date'].' '.$validated['time']);
 
         $problems = [];
+        if (! $service->business->is_approved) {
+            $problems[] = 'Ten lokal nie jest dostępny do rezerwacji.';
+        }
         if ($this->isBlacklisted($service->business_id)) {
             $problems[] = 'Nie możesz rezerwować wizyt w tym lokalu.';
         }

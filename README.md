@@ -106,32 +106,6 @@ Schemat zdefiniowano w migracjach (`database/migrations`) i modelach Eloquent. P
 ![Schemat bazy danych](assets/erd.png)
 *Rys. 1: Diagram związków encji (ERD).*
 
-### 4.1. Konta i role
-- **`users`** - `id`, `username`, `email` (unikalny), `first_name`, `surname`, `phone`, `password` (hash), `image_id`, `is_admin`. Rola wynika z danych: **admin** (`is_admin = true`), **właściciel** (ma rekord w `businesses`), **klient** (pozostali).
-
-### 4.2. Lokale, usługi i pracownicy
-- **`businesses`** - `id`, `owner_id`, `name`, `category`, `address`, `lat`, `lon`, `description`, `is_approved`.
-- **`services`** - `id`, `business_id`, `name`, `price`, `duration_minutes`.
-- **`employees`** - `id`, `business_id`, `name`, `photo`, `specialization`, `is_active`.
-- **`employee_service`** - tabela łącząca pracownika z wykonywanymi usługami.
-- **`working_hours`** - `employee_id`, `day_of_week` (1–7, ISO), `start_time`, `end_time`.
-- **`employee_leaves`** - urlopy pracownika: `employee_id`, `start_date`, `end_date`, `reason`.
-
-### 4.3. Rezerwacje
-- **`appointments`** - `client_id`, `employee_id`, `service_id`, `start_at`, `finish_at`, `status` (`pending`/`confirmed`/`completed`/`cancelled`), `total_price`.
-
-### 4.4. Opinie
-- **`business_reviews`** - `business_id`, `user_id`, `rating`, `comment`, `created_at` (opinia o lokalu).
-- **`employee_reviews`** - `employee_id`, `user_id`, `service`, `rating`, `comment`, `created_at` (opinia o specjaliście po wizycie).
-
-### 4.5. Zdjęcia
-- **`images`** - `file_name`, `original_file_name`, `file_type` (metadane pliku na dysku `public`).
-- **`business_photos`** - galeria lokalu (`business_id`, `path`); **`employee_portfolio`** - portfolio pracownika (`employee_id`, `path`, `description`).
-- **`businesses_images`**, **`businesse_reviews_images`**, **`employee_reviews_images`** - powiązania zdjęć z `images` (pivoty; w opiniach z `user_id`, by przypisać zdjęcie do autora).
-
-### 4.6. Moderacja
-- **`business_blacklist`** - `business_id`, `user_id`, `reason`, `created_at`; unikalna para lokal–użytkownik.
-
 ## 5. Wyszukiwarka usług
 
 Wyszukiwarka (`/szukaj`) działa **na poziomie usług**, a nie lokali - wynik to konkretna usługa w danym salonie wraz z wejściem do rezerwacji.
@@ -192,30 +166,29 @@ Zatwierdzanie/odrzucanie zgłoszonych lokali, edycja i usuwanie lokali, zarządz
 ![Panel administratora - użytkownicy](assets/admin-users.png)
 *Rys. 8: Panel administratora - użytkownicy.*
 
-## 9. Przegląd interfejsu
+## 9. Przegląd aplikacji
+Pełen przebieg umawiania wizyty przez klienta.
 
-Aplikacja korzysta z jasnego motywu Bootstrapa z ciemnym paskiem nawigacji (`BookMe`).
+![Rejestracja](assets/booking-step1.png)
+*Rys. 9: Rejestracja użytkownika ``jacex``.*
 
-### 9.1. Strona główna
-Hero z wyszukiwarką, kafelki kategorii oraz **najpopularniejsze lokale** (sortowanie ważone) z plakietką kategorii, oceną w gwiazdkach i ceną „od".
+![Strona główna](assets/booking-step2.png)
+*Rys. 10: Strona główna - wpisanie szukanej usługi w pole szukaj i wybranie daty.*
 
-![Strona główna](assets/home.png)
-*Rys. 9: Strona główna - wyszukiwarka, kategorie i popularne lokale.*
+![Wyszukiwarka](assets/booking-step3.png)
+*Rys. 11: Wyszukiwarka - lista dostępnych usług spełniających nasze filtry, wybór interesującej nas opci.*
 
-### 9.2. Strona lokalu
-Zakładki: usługi, pracownicy (z portfolio), opinie (ze zdjęciami) i lokalizacja na mapie; u góry galeria zdjęć salonu i przycisk rezerwacji.
+![Booking wizard](assets/booking-step4.png)
+*Rys. 12: Bookowanie terminu - wybór pracownika i godziny usługi.*
 
-![Strona lokalu](assets/business.png)
-*Rys. 10: Strona lokalu - usługi i galeria.*
+![Booking wizard](assets/booking-step5.png)
+*Rys. 13: Bookowanie terminu - potwierdzenie wybranych opcji.*
 
-### 9.3. Rejestracja, logowanie i konto
-Rejestracja zbiera nazwę użytkownika, imię, nazwisko, telefon (z walidacją) i e-mail; logowanie obsługuje „zapamiętaj mnie". Ustawienia konta pozwalają edytować dane, zmienić e-mail i hasło oraz usunąć konto.
+![Booking wizard](assets/booking-step6.png)
+*Rys. 14: Bookowanie terminu - informacja zwrotna o przyjęciu bookingu.*
 
-![Rejestracja](assets/register.png)
-*Rys. 11: Formularz rejestracji.*
-
-![Ustawienia konta](assets/account.png)
-*Rys. 12: Ustawienia konta.*
+![Moje wizyty](assets/booking-step7.png)
+*Rys. 15: Wizyty klienta - lista historii oraz nadchodzących wizyt klienta.*
 
 ## 10. Instalacja i uruchomienie
 
