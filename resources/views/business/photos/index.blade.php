@@ -7,7 +7,11 @@
             <h2 class="mb-0">Zdjęcia Salonu: {{ $business->name }}</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mt-2">
-                    <li class="breadcrumb-item"><a href="{{ route('biznes.lokale.index') }}">Moje lokale</a></li>
+                    @if(Auth::user()->isAdmin())
+                        <li class="breadcrumb-item"><a href="{{ route('admin.businesses.edit', $business) }}">Edycja lokalu</a></li>
+                    @else
+                        <li class="breadcrumb-item"><a href="{{ route('biznes.lokale.index') }}">Moje lokale</a></li>
+                    @endif
                     <li class="breadcrumb-item active" aria-current="page">Zdjęcia</li>
                 </ol>
             </nav>

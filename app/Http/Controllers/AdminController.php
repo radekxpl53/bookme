@@ -150,6 +150,8 @@ class AdminController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
+        $validated['is_admin'] = $request->has('is_admin');
+
         $user->update($validated);
 
         return redirect()->route('admin.users')->with('success', 'Dane użytkownika zostały zaktualizowane.');
@@ -157,9 +159,6 @@ class AdminController extends Controller
 
     public function destroyUser(User $user)
     {
-        if (auth()->id() === $user->id) {
-            return back()->with('error', 'Nie możesz usunąć własnego konta!');
-        }
 
         $user->delete();
 
@@ -182,8 +181,8 @@ class AdminController extends Controller
                     $sub->where('comment', 'like', "%{$search}%")
                         ->orWhereHas('user', function($u) use ($search) {
                             $u->where('username', 'like', "%{$search}%")
-                              ->orWhere('first_name', 'like', "%{$search}%")
-                              ->orWhere('surname', 'like', "%{$search}%");
+                                ->orWhere('first_name', 'like', "%{$search}%")
+                                ->orWhere('surname', 'like', "%{$search}%");
                         })
                         ->orWhereHas('business', function($b) use ($search) {
                             $b->where('name', 'like', "%{$search}%");
@@ -206,8 +205,8 @@ class AdminController extends Controller
                     $sub->where('comment', 'like', "%{$search}%")
                         ->orWhereHas('user', function($u) use ($search) {
                             $u->where('username', 'like', "%{$search}%")
-                              ->orWhere('first_name', 'like', "%{$search}%")
-                              ->orWhere('surname', 'like', "%{$search}%");
+                                ->orWhere('first_name', 'like', "%{$search}%")
+                                ->orWhere('surname', 'like', "%{$search}%");
                         })
                         ->orWhereHas('employee', function($e) use ($search) {
                             $e->where('name', 'like', "%{$search}%");
@@ -225,6 +224,37 @@ class AdminController extends Controller
         $reviews = $reviews->sortByDesc('created_at');
 
         return view('admin.reviews', compact('reviews', 'type', 'search', 'rating'));
+    }
+    
+    public function editReview($type, $id)
+    {
+        if ($type === 'business') {
+            $review = \App\Models\BusinessReview::findOrFail($id);
+            $targetName = $review->business->name;
+        } else {
+            $review = \App\Models\EmployeeReview::findOrFail($id);
+            $targetName = $review->employee->name;
+        }
+
+        return view('admin.reviews.edit', compact('review', 'type', 'targetName'));
+    }
+
+    public function updateReview(Request $request, $type, $id)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string',
+        ]);
+
+        if ($type === 'business') {
+            $review = \App\Models\BusinessReview::findOrFail($id);
+            $review->update($validated);
+        } else {
+            $review = \App\Models\EmployeeReview::findOrFail($id);
+            $review->update($validated);
+        }
+
+        return redirect()->route('admin.reviews')->with('success', 'Opinia została pomyślnie zaktualizowana.');
     }
 
     public function destroyReview($type, $id)

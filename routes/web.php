@@ -17,8 +17,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BusinessPhotoController;
 use App\Http\Controllers\EmployeePortfolioController;
 
-Route::middleware(['not_admin'])->group(function () {
-
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/szukaj', [SearchController::class, 'index'])->name('szukaj');
@@ -70,7 +68,6 @@ Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(f
     Route::get('lokale/{business}/opinie', [\App\Http\Controllers\BusinessReviewController::class, 'index'])->name('lokale.opinie.index');
 });
 
-});
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -85,6 +82,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/uzytkownicy/{user}', [AdminController::class, 'updateUser'])->name('users.update');
     Route::delete('/uzytkownicy/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::get('/opinie', [AdminController::class, 'reviews'])->name('reviews');
+    Route::get('/opinie/{type}/{id}/edit', [AdminController::class, 'editReview'])->name('reviews.edit');
+    Route::put('/opinie/{type}/{id}', [AdminController::class, 'updateReview'])->name('reviews.update');
     Route::delete('/opinie/{type}/{id}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
 });
 

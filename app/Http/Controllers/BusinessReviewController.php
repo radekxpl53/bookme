@@ -15,7 +15,8 @@ class BusinessReviewController extends Controller
      */
     private function authorizeOwner(Business $business)
     {
-        if ($business->owner_id !== Auth::id()) {
+        $user = Auth::user();
+        if ($business->owner_id !== $user->id && !$user->is_admin) {
             abort(403, 'Brak uprawnień. Ten lokal należy do kogoś innego.');
         }
     }

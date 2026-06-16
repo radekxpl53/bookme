@@ -13,7 +13,8 @@ class EmployeeController extends Controller
 {
     private function authorizeOwner(Business $business): void
     {
-        if ($business->owner_id !== Auth::id()) {
+        $user = Auth::user();
+        if ($business->owner_id !== $user->id && !$user->is_admin) {
             abort(403);
         }
     }
@@ -152,7 +153,9 @@ class EmployeeController extends Controller
         DB::table('employee_reviews_images')->where('employee_id', $employee->id)->delete();
         $employee->reviews()->delete();
         $employee->portfolio()->delete();
+
         $employee->appointments()->delete();
+        $employee->services()->detach();
         $employee->delete();
 
         return redirect()->route('biznes.lokale.pracownicy.index', $business)

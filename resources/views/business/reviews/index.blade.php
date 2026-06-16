@@ -7,7 +7,11 @@
             <h2 class="mb-0 fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Opinie Klientów</h2>
             <nav aria-label="breadcrumb" class="mt-2">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('biznes.lokale.index') }}">Moje lokale</a></li>
+                    @if(Auth::user()->isAdmin())
+                        <li class="breadcrumb-item"><a href="{{ route('admin.businesses.edit', $business) }}">Edycja lokalu</a></li>
+                    @else
+                        <li class="breadcrumb-item"><a href="{{ route('biznes.lokale.index') }}">Moje lokale</a></li>
+                    @endif
                     <li class="breadcrumb-item text-muted">{{ $business->name }}</li>
                     <li class="breadcrumb-item active" aria-current="page">Opinie</li>
                 </ol>

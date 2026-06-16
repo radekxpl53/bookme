@@ -13,7 +13,8 @@ class EmployeePortfolioController extends Controller
 {
     private function authorizeOwner(Business $business): void
     {
-        if ($business->owner_id !== Auth::id()) {
+        $user = Auth::user();
+        if ($business->owner_id !== $user->id && !$user->is_admin) {
             abort(403, 'Brak uprawnień. Nie możesz edytować obcego salonu!');
         }
     }
