@@ -10,6 +10,9 @@
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Edycja lokalu: {{ $business->name }}</h5>
                     <div>
+                        <a href="{{ route('biznes.lokale.blacklist.index', $business) }}" class="btn btn-sm btn-dark fw-bold shadow-sm me-2">
+                            <i class="bi bi-person-x-fill"></i> Zarządzaj Blacklistą
+                        </a>
                         <a href="{{ route('biznes.lokale.zdjecia.index', $business) }}" class="btn btn-sm btn-light fw-bold text-primary shadow-sm me-2">
                             <i class="bi bi-images"></i> Zarządzaj Portfolio Lokalu
                         </a>

@@ -66,7 +66,38 @@ class BlacklistController extends Controller
         ]);
 
         return redirect()->route('biznes.lokale.blacklist.index', $business)
-                         ->with('success', 'Użytkownik został dodany do czarnej listy.');
+                         ->with('success', 'Klient został zablokowany.');
+    }
+
+    public function edit(Business $business, BusinessBlacklist $blacklist)
+    {
+        $this->authorizeOwner($business);
+
+        if ($blacklist->business_id !== $business->id) {
+            abort(404);
+        }
+
+        return view('business.blacklist.edit', compact('business', 'blacklist'));
+    }
+
+    public function update(Request $request, Business $business, BusinessBlacklist $blacklist)
+    {
+        $this->authorizeOwner($business);
+
+        if ($blacklist->business_id !== $business->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'reason' => 'nullable|string|max:255',
+        ]);
+
+        $blacklist->update([
+            'reason' => $validated['reason'],
+        ]);
+
+        return redirect()->route('biznes.lokale.blacklist.index', $business)
+                         ->with('success', 'Powód blokady został zaktualizowany.');
     }
 
     public function destroy(Business $business, BusinessBlacklist $blacklist)

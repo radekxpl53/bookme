@@ -31,6 +31,11 @@
                         </div>
                         <span class="ms-3 text-muted small fw-bold">{{ $completionRate }}% Zakończonych</span>
                     </div>
+                    <div class="mt-auto">
+                        <a href="{{ route('admin.appointments') }}" class="btn btn-sm btn-outline-primary w-100 fw-bold">
+                            Zarządzaj wizytami <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

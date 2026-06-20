@@ -267,4 +267,75 @@ class AdminController extends Controller
 
         return back()->with('success', 'Opinia została pomyślnie usunięta.');
     }
+
+    public function appointments(Request $request)
+    {
+        $status = $request->get('status', 'all');
+        $search = $request->get('search');
+
+        $query = \App\Models\Appointment::with(['employee.business', 'client', 'service']);
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('client', function ($q2) use ($search) {
+                    $q2->where('first_name', 'like', "%{$search}%")
+                       ->orWhere('surname', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                })->orWhereHas('employee.business', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })->orWhereHas('employee', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $appointments = $query->latest('start_at')->get();
+
+        return view('admin.appointments', compact('appointments', 'status', 'search'));
+    }
+
+    public function editAppointment(\App\Models\Appointment $appointment)
+    {
+        $appointment->load(['employee.business.services', 'employee.business.employees']);
+        return view('admin.appointments.edit', compact('appointment'));
+    }
+
+    public function updateAppointment(Request $request, \App\Models\Appointment $appointment)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,completed,cancelled',
+            'notes' => 'nullable|string',
+            'employee_id' => 'required|exists:employees,id',
+            'service_id' => 'required|exists:services,id',
+            'appointment_date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+        ]);
+
+        $service = \App\Models\Service::findOrFail($validated['service_id']);
+        
+        // Calculate start_at and finish_at based on service duration
+        $startAt = \Carbon\Carbon::parse($validated['appointment_date'] . ' ' . $validated['start_time']);
+        $finishAt = $startAt->copy()->addMinutes($service->duration);
+        
+        $appointment->update([
+            'status' => $validated['status'],
+            'employee_id' => $validated['employee_id'],
+            'service_id' => $validated['service_id'],
+            'start_at' => $startAt,
+            'finish_at' => $finishAt,
+            'total_price' => $service->price,
+        ]);
+
+        return redirect()->route('admin.appointments')->with('success', 'Wizyta została pomyślnie zaktualizowana.');
+    }
+
+    public function destroyAppointment(\App\Models\Appointment $appointment)
+    {
+        $appointment->delete();
+        return back()->with('success', 'Wizyta została bezpowrotnie usunięta.');
+    }
 }

@@ -49,11 +49,16 @@
                             <td class="align-middle">
                                 {{ $item->created_at->format('d.m.Y H:i') }}
                             </td>
-                            <td class="text-end align-middle">
-                                <form action="{{ route('biznes.lokale.blacklist.destroy', [$business, $item]) }}" method="POST" onsubmit="return confirm('Czy na pewno chcesz odblokować tego klienta?');">
+                            <td class="align-middle text-end">
+                                <a href="{{ route('biznes.lokale.blacklist.edit', [$business, $item]) }}" class="btn btn-sm btn-outline-primary" title="Edytuj powód">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ route('biznes.lokale.blacklist.destroy', [$business, $item]) }}" method="POST" class="d-inline" onsubmit="return confirm('Czy na pewno chcesz odblokować tego klienta? Będzie on mógł ponownie rezerwować wizyty.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-success">Odblokuj</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Odblokuj">
+                                        <i class="bi bi-unlock-fill"></i> Odblokuj
+                                    </button>
                                 </form>
                             </td>
                         </tr>

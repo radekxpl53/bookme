@@ -56,7 +56,7 @@ Route::middleware(['auth', 'owner'])->prefix('biznes')->name('biznes.')->group(f
     Route::resource('lokale', BusinessController::class)->except(['create', 'store']);
     Route::resource('lokale.uslugi', ServiceController::class)->except(['show'])->parameters(['lokale' => 'business', 'uslugi' => 'service']);
     Route::resource('lokale.pracownicy', EmployeeController::class)->except(['show'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee']);
-    Route::resource('lokale.blacklist', BlacklistController::class)->except(['show', 'edit', 'update'])->parameters(['lokale' => 'business', 'blacklist' => 'blacklist']);
+    Route::resource('lokale.blacklist', BlacklistController::class)->except(['show'])->parameters(['lokale' => 'business', 'blacklist' => 'blacklist']);
     
     Route::resource('lokale.zdjecia', BusinessPhotoController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'zdjecia' => 'photo']);
     Route::resource('lokale.pracownicy.portfolio', EmployeePortfolioController::class)->only(['index', 'store', 'destroy'])->parameters(['lokale' => 'business', 'pracownicy' => 'employee', 'portfolio' => 'portfolio']);
@@ -85,6 +85,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/opinie/{type}/{id}/edit', [AdminController::class, 'editReview'])->name('reviews.edit');
     Route::put('/opinie/{type}/{id}', [AdminController::class, 'updateReview'])->name('reviews.update');
     Route::delete('/opinie/{type}/{id}', [AdminController::class, 'destroyReview'])->name('reviews.destroy');
+    
+    Route::get('/wizyty', [AdminController::class, 'appointments'])->name('appointments');
+    Route::get('/wizyty/{appointment}/edit', [AdminController::class, 'editAppointment'])->name('appointments.edit');
+    Route::put('/wizyty/{appointment}', [AdminController::class, 'updateAppointment'])->name('appointments.update');
+    Route::delete('/wizyty/{appointment}', [AdminController::class, 'destroyAppointment'])->name('appointments.destroy');
 });
 
 require __DIR__.'/auth.php';
